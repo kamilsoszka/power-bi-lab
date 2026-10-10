@@ -1,0 +1,989 @@
+Workday Monitor SVG Dark = 
+VAR WorkStartTime =
+    TIME(8, 0, 0)
+
+VAR WorkEndTime =
+    TIME(16, 0, 0)
+
+VAR IsWorkScheduleValid =
+    WorkEndTime > WorkStartTime
+
+-- ============================================================
+-- CURRENT WARSAW DATE AND TIME
+-- ============================================================
+VAR CurrentUtcDateTime =
+    UTCNOW()
+
+VAR CurrentYear =
+    YEAR(CurrentUtcDateTime)
+
+VAR LastDayOfMarch =
+    DATE(CurrentYear, 3, 31)
+
+VAR LastSundayOfMarch =
+    LastDayOfMarch
+        - MOD(
+            WEEKDAY(LastDayOfMarch, 2),
+            7
+        )
+
+VAR DstStartUtc =
+    LastSundayOfMarch + TIME(1, 0, 0)
+
+VAR LastDayOfOctober =
+    DATE(CurrentYear, 10, 31)
+
+VAR LastSundayOfOctober =
+    LastDayOfOctober
+        - MOD(
+            WEEKDAY(LastDayOfOctober, 2),
+            7
+        )
+
+VAR DstEndUtc =
+    LastSundayOfOctober + TIME(1, 0, 0)
+
+VAR IsDaylightSavingTime =
+    CurrentUtcDateTime >= DstStartUtc
+        && CurrentUtcDateTime < DstEndUtc
+
+VAR CurrentUtcOffsetHours =
+    IF(
+        IsDaylightSavingTime,
+        2,
+        1
+    )
+
+VAR CurrentTimeZoneName =
+    IF(
+        IsDaylightSavingTime,
+        "CEST (UTC+2)",
+        "CET (UTC+1)"
+    )
+
+VAR CurrentLocalDateTime =
+    CurrentUtcDateTime
+        + DIVIDE(CurrentUtcOffsetHours, 24)
+
+VAR CurrentLocalDate =
+    DATE(
+        YEAR(CurrentLocalDateTime),
+        MONTH(CurrentLocalDateTime),
+        DAY(CurrentLocalDateTime)
+    )
+
+VAR WorkStartDateTime =
+    CurrentLocalDate + WorkStartTime
+
+VAR WorkEndDateTime =
+    CurrentLocalDate + WorkEndTime
+
+-- ============================================================
+-- WORKING DAY
+-- ============================================================
+VAR IsWeekend =
+    WEEKDAY(CurrentLocalDateTime, 2) >= 6
+
+VAR IsWorkingDay =
+    IsWorkScheduleValid
+        && NOT IsWeekend
+
+VAR WorkdayDurationSeconds =
+    IF(
+        IsWorkScheduleValid,
+        DATEDIFF(
+            WorkStartDateTime,
+            WorkEndDateTime,
+            SECOND
+        ),
+        0
+    )
+
+VAR RawElapsedSeconds =
+    DATEDIFF(
+        WorkStartDateTime,
+        CurrentLocalDateTime,
+        SECOND
+    )
+
+VAR ElapsedSeconds =
+    IF(
+        NOT IsWorkingDay,
+        0,
+        MAX(
+            0,
+            MIN(
+                WorkdayDurationSeconds,
+                RawElapsedSeconds
+            )
+        )
+    )
+
+VAR RemainingSeconds =
+    IF(
+        IsWorkingDay,
+        MAX(
+            0,
+            WorkdayDurationSeconds - ElapsedSeconds
+        ),
+        0
+    )
+
+-- ============================================================
+-- TIME LABELS
+-- ============================================================
+VAR WorkdayDurationText =
+    FORMAT(
+        QUOTIENT(WorkdayDurationSeconds, 3600),
+        "00"
+    )
+        & ":"
+        & FORMAT(
+            QUOTIENT(
+                MOD(WorkdayDurationSeconds, 3600),
+                60
+            ),
+            "00"
+        )
+        & ":"
+        & FORMAT(
+            MOD(WorkdayDurationSeconds, 60),
+            "00"
+        )
+
+VAR ElapsedTimeText =
+    FORMAT(
+        QUOTIENT(ElapsedSeconds, 3600),
+        "00"
+    )
+        & ":"
+        & FORMAT(
+            QUOTIENT(
+                MOD(ElapsedSeconds, 3600),
+                60
+            ),
+            "00"
+        )
+        & ":"
+        & FORMAT(
+            MOD(ElapsedSeconds, 60),
+            "00"
+        )
+
+VAR RemainingTimeText =
+    FORMAT(
+        QUOTIENT(RemainingSeconds, 3600),
+        "00"
+    )
+        & ":"
+        & FORMAT(
+            QUOTIENT(
+                MOD(RemainingSeconds, 3600),
+                60
+            ),
+            "00"
+        )
+        & ":"
+        & FORMAT(
+            MOD(RemainingSeconds, 60),
+            "00"
+        )
+
+-- ============================================================
+-- PROGRESS
+-- ============================================================
+VAR WorkdayProgress =
+    IF(
+        IsWorkingDay,
+        MIN(
+            1,
+            MAX(
+                0,
+                DIVIDE(
+                    ElapsedSeconds,
+                    WorkdayDurationSeconds,
+                    0
+                )
+            )
+        )
+    )
+
+VAR HasProgress =
+    NOT ISBLANK(WorkdayProgress)
+
+VAR RemainingWorkday =
+    IF(
+        HasProgress,
+        1 - WorkdayProgress
+    )
+
+VAR WorkdayProgressText =
+    IF(
+        HasProgress,
+        FORMAT(WorkdayProgress, "0.0%"),
+        "-"
+    )
+
+VAR RemainingWorkdayText =
+    IF(
+        HasProgress,
+        FORMAT(RemainingWorkday, "0.0%"),
+        "-"
+    )
+
+VAR WorkdayStatus =
+    SWITCH(
+        TRUE(),
+        NOT IsWorkScheduleValid,
+            "Invalid work schedule",
+        IsWeekend,
+            "Weekend - no working hours scheduled",
+        CurrentLocalDateTime < WorkStartDateTime,
+            "Before work",
+        CurrentLocalDateTime < WorkEndDateTime,
+            "Work in progress",
+        "Workday completed"
+    )
+
+-- ============================================================
+-- SPRING DARK MODE THEME
+-- ============================================================
+VAR PageBackgroundColor =
+    "#0B1411"
+
+VAR CardBackgroundColor =
+    "#111F1A"
+
+VAR DateTimeCardColor =
+    "#102A39"
+
+VAR WorkStartCardColor =
+    "#112C21"
+
+VAR WorkEndCardColor =
+    "#251E3B"
+
+VAR DurationCardColor =
+    "#332B13"
+
+VAR RemainingCardColor =
+    "#351C27"
+
+VAR PrimaryTextColor =
+    "#F2FAF6"
+
+VAR SecondaryTextColor =
+    "#B5CDC4"
+
+VAR MutedTextColor =
+    "#89A49A"
+
+VAR BorderColor =
+    "#35564A"
+
+VAR BlueBorderColor =
+    "#338EC4"
+
+VAR GreenBorderColor =
+    "#3BA56D"
+
+VAR PurpleBorderColor =
+    "#8068C5"
+
+VAR YellowBorderColor =
+    "#C99D2E"
+
+VAR PinkBorderColor =
+    "#C65478"
+
+VAR DividerColor =
+    "#304D43"
+
+VAR ProgressTrackColor =
+    "#29463C"
+
+VAR WhiteColor =
+    "#FFFFFF"
+
+-- ============================================================
+-- DYNAMIC SPRING STATUS COLORS
+-- ============================================================
+VAR MainColor =
+    SWITCH(
+        TRUE(),
+        NOT IsWorkScheduleValid, "#FF6680",
+        IsWeekend, "#B79CEB",
+        CurrentLocalDateTime < WorkStartDateTime, "#54B7ED",
+        CurrentLocalDateTime < WorkEndDateTime, "#F2A24C",
+        "#4DD394"
+    )
+
+VAR StatusBackgroundColor =
+    SWITCH(
+        TRUE(),
+        NOT IsWorkScheduleValid, "#3B1821",
+        IsWeekend, "#29213E",
+        CurrentLocalDateTime < WorkStartDateTime, "#102C3C",
+        CurrentLocalDateTime < WorkEndDateTime, "#382713",
+        "#123225"
+    )
+
+VAR StatusBorderColor =
+    SWITCH(
+        TRUE(),
+        NOT IsWorkScheduleValid, "#B94359",
+        IsWeekend, "#765FAE",
+        CurrentLocalDateTime < WorkStartDateTime, "#328DBD",
+        CurrentLocalDateTime < WorkEndDateTime, "#B9782F",
+        "#2A9A68"
+    )
+
+VAR StatusIcon =
+    SWITCH(
+        TRUE(),
+        NOT IsWorkScheduleValid, "!",
+        IsWeekend, "Z",
+        CurrentLocalDateTime < WorkStartDateTime, "i",
+        CurrentLocalDateTime < WorkEndDateTime, ">",
+        "OK"
+    )
+
+-- ============================================================
+-- PROGRESS BAR
+-- ============================================================
+VAR ProgressBarX =
+    36
+
+VAR ProgressBarY =
+    480
+
+VAR ProgressBarWidth =
+    568
+
+VAR ProgressBarHeight =
+    20
+
+VAR ProgressWidth =
+    IF(
+        HasProgress,
+        ROUND(
+            ProgressBarWidth * WorkdayProgress,
+            0
+        ),
+        0
+    )
+
+-- ============================================================
+-- LAST REFRESH
+-- ============================================================
+VAR LastRefreshUtc =
+    MAX(RefreshInfo[LastRefreshUTC])
+
+VAR HasRefreshTimestamp =
+    NOT ISBLANK(LastRefreshUtc)
+
+VAR RefreshYear =
+    IF(
+        HasRefreshTimestamp,
+        YEAR(LastRefreshUtc),
+        CurrentYear
+    )
+
+VAR RefreshLastDayOfMarch =
+    DATE(RefreshYear, 3, 31)
+
+VAR RefreshLastSundayOfMarch =
+    RefreshLastDayOfMarch
+        - MOD(
+            WEEKDAY(RefreshLastDayOfMarch, 2),
+            7
+        )
+
+VAR RefreshDstStartUtc =
+    RefreshLastSundayOfMarch + TIME(1, 0, 0)
+
+VAR RefreshLastDayOfOctober =
+    DATE(RefreshYear, 10, 31)
+
+VAR RefreshLastSundayOfOctober =
+    RefreshLastDayOfOctober
+        - MOD(
+            WEEKDAY(RefreshLastDayOfOctober, 2),
+            7
+        )
+
+VAR RefreshDstEndUtc =
+    RefreshLastSundayOfOctober + TIME(1, 0, 0)
+
+VAR IsRefreshDaylightSavingTime =
+    HasRefreshTimestamp
+        && LastRefreshUtc >= RefreshDstStartUtc
+        && LastRefreshUtc < RefreshDstEndUtc
+
+VAR RefreshUtcOffsetHours =
+    IF(
+        IsRefreshDaylightSavingTime,
+        2,
+        1
+    )
+
+VAR RefreshTimeZoneName =
+    IF(
+        IsRefreshDaylightSavingTime,
+        "CEST",
+        "CET"
+    )
+
+VAR LastRefreshLocalDateTime =
+    IF(
+        HasRefreshTimestamp,
+        LastRefreshUtc
+            + DIVIDE(RefreshUtcOffsetHours, 24),
+        BLANK()
+    )
+
+VAR LastRefreshText =
+    IF(
+        NOT HasRefreshTimestamp,
+        "Not available",
+        FORMAT(
+            LastRefreshLocalDateTime,
+            "dd MMM yyyy HH:mm:ss"
+        )
+            & " "
+            & RefreshTimeZoneName
+    )
+
+-- ============================================================
+-- SVG SPRING DARK MODE
+-- ============================================================
+VAR SVG =
+    "<svg xmlns='http://www.w3.org/2000/svg'
+          width='640'
+          height='720'
+          viewBox='0 0 640 720'>"
+
+        -- Page background
+        & "<rect x='0'
+                 y='0'
+                 width='640'
+                 height='720'
+                 fill='"
+        & PageBackgroundColor
+        & "'/>"
+
+        -- Main card
+        & "<rect x='16'
+                 y='16'
+                 width='608'
+                 height='688'
+                 rx='20'
+                 fill='"
+        & CardBackgroundColor
+        & "'
+                 stroke='"
+        & BorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        -- Top accent
+        & "<rect x='16'
+                 y='16'
+                 width='608'
+                 height='8'
+                 rx='4'
+                 fill='"
+        & MainColor
+        & "'/>"
+
+        -- Header icon background
+        & "<rect x='36'
+                 y='48'
+                 width='48'
+                 height='48'
+                 rx='12'
+                 fill='"
+        & StatusBackgroundColor
+        & "'
+                 stroke='"
+        & StatusBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        -- Header icon
+        & "<text x='60'
+                 y='79'
+                 text-anchor='middle'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='16'
+                 font-weight='700'
+                 fill='"
+        & MainColor
+        & "'>"
+        & StatusIcon
+        & "</text>"
+
+        -- Header
+        & "<text x='104'
+                 y='68'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='26'
+                 font-weight='700'
+                 letter-spacing='0.3'
+                 fill='"
+        & PrimaryTextColor
+        & "'>WORKDAY MONITOR</text>"
+
+        & "<text x='104'
+                 y='90'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='13'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>Warsaw work schedule</text>"
+
+        -- Current date and time card
+        & "<rect x='36'
+                 y='120'
+                 width='568'
+                 height='92'
+                 rx='14'
+                 fill='"
+        & DateTimeCardColor
+        & "'
+                 stroke='"
+        & BlueBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<text x='56'
+                 y='150'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>CURRENT DATE</text>"
+
+        & "<text x='56'
+                 y='181'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='22'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & FORMAT(CurrentLocalDateTime, "dd MMM yyyy")
+        & "</text>"
+
+        & "<line x1='320'
+                 y1='138'
+                 x2='320'
+                 y2='194'
+                 stroke='"
+        & BlueBorderColor
+        & "'
+                 stroke-width='1'/>"
+
+        & "<text x='344'
+                 y='150'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>CURRENT TIME</text>"
+
+        & "<text x='344'
+                 y='181'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='22'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & FORMAT(CurrentLocalDateTime, "HH:mm:ss")
+        & "</text>"
+
+        & "<text x='344'
+                 y='199'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='11'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>"
+        & CurrentTimeZoneName
+        & "</text>"
+
+        -- Work schedule title
+        & "<text x='36'
+                 y='250'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='15'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>WORK SCHEDULE</text>"
+
+        -- Work start card
+        & "<rect x='36'
+                 y='268'
+                 width='176'
+                 height='92'
+                 rx='14'
+                 fill='"
+        & WorkStartCardColor
+        & "'
+                 stroke='"
+        & GreenBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<text x='52'
+                 y='296'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>WORK START</text>"
+
+        & "<text x='52'
+                 y='330'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='22'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & FORMAT(WorkStartDateTime, "HH:mm:ss")
+        & "</text>"
+
+        -- Work end card
+        & "<rect x='232'
+                 y='268'
+                 width='176'
+                 height='92'
+                 rx='14'
+                 fill='"
+        & WorkEndCardColor
+        & "'
+                 stroke='"
+        & PurpleBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<text x='248'
+                 y='296'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>WORK END</text>"
+
+        & "<text x='248'
+                 y='330'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='22'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & FORMAT(WorkEndDateTime, "HH:mm:ss")
+        & "</text>"
+
+        -- Duration card
+        & "<rect x='428'
+                 y='268'
+                 width='176'
+                 height='92'
+                 rx='14'
+                 fill='"
+        & DurationCardColor
+        & "'
+                 stroke='"
+        & YellowBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<text x='444'
+                 y='296'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>DURATION</text>"
+
+        & "<text x='444'
+                 y='330'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='22'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & WorkdayDurationText
+        & "</text>"
+
+        -- Elapsed time card
+        & "<rect x='36'
+                 y='380'
+                 width='274'
+                 height='70'
+                 rx='14'
+                 fill='"
+        & StatusBackgroundColor
+        & "'
+                 stroke='"
+        & StatusBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<text x='54'
+                 y='407'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>ELAPSED TIME</text>"
+
+        & "<text x='54'
+                 y='435'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='23'
+                 font-weight='700'
+                 fill='"
+        & MainColor
+        & "'>"
+        & ElapsedTimeText
+        & "</text>"
+
+        -- Remaining time card
+        & "<rect x='330'
+                 y='380'
+                 width='274'
+                 height='70'
+                 rx='14'
+                 fill='"
+        & RemainingCardColor
+        & "'
+                 stroke='"
+        & PinkBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<text x='348'
+                 y='407'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>REMAINING TIME</text>"
+
+        & "<text x='348'
+                 y='435'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='23'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & RemainingTimeText
+        & "</text>"
+
+        -- Progress labels
+        & "<text x='36'
+                 y='474'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='13'
+                 font-weight='600'
+                 fill='"
+        & PrimaryTextColor
+        & "'>Workday progress</text>"
+
+        & "<text x='604'
+                 y='474'
+                 text-anchor='end'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='15'
+                 font-weight='700'
+                 fill='"
+        & MainColor
+        & "'>"
+        & WorkdayProgressText
+        & "</text>"
+
+        -- Progress track
+        & "<rect x='"
+        & ProgressBarX
+        & "' y='"
+        & ProgressBarY
+        & "' width='"
+        & ProgressBarWidth
+        & "' height='"
+        & ProgressBarHeight
+        & "' rx='10'
+                 fill='"
+        & ProgressTrackColor
+        & "'/>"
+
+        -- Progress fill
+        & IF(
+            ProgressWidth > 0,
+            "<rect x='"
+                & ProgressBarX
+                & "' y='"
+                & ProgressBarY
+                & "' width='"
+                & ProgressWidth
+                & "' height='"
+                & ProgressBarHeight
+                & "' rx='10'
+                         fill='"
+                & MainColor
+                & "'/>",
+            ""
+        )
+
+        -- Progress details
+        & "<text x='36'
+                 y='526'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>Progress: "
+        & WorkdayProgressText
+        & "</text>"
+
+        & "<text x='604'
+                 y='526'
+                 text-anchor='end'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>Remaining: "
+        & RemainingWorkdayText
+        & "</text>"
+
+        -- Status card
+        & "<rect x='36'
+                 y='550'
+                 width='568'
+                 height='64'
+                 rx='14'
+                 fill='"
+        & StatusBackgroundColor
+        & "'
+                 stroke='"
+        & StatusBorderColor
+        & "'
+                 stroke-width='1.5'/>"
+
+        & "<circle cx='66'
+                   cy='582'
+                   r='16'
+                   fill='"
+        & MainColor
+        & "'/>"
+
+        & "<text x='66'
+                 y='587'
+                 text-anchor='middle'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='11'
+                 font-weight='700'
+                 fill='"
+        & WhiteColor
+        & "'>"
+        & StatusIcon
+        & "</text>"
+
+        & "<text x='94'
+                 y='576'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>STATUS</text>"
+
+        & "<text x='94'
+                 y='598'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='16'
+                 font-weight='700'
+                 fill='"
+        & PrimaryTextColor
+        & "'>"
+        & WorkdayStatus
+        & "</text>"
+
+        -- Last refresh
+        & "<line x1='36'
+                 y1='640'
+                 x2='604'
+                 y2='640'
+                 stroke='"
+        & DividerColor
+        & "'
+                 stroke-width='1'/>"
+
+        & "<text x='36'
+                 y='668'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & MutedTextColor
+        & "'>LAST REFRESHED</text>"
+
+        & "<text x='604'
+                 y='668'
+                 text-anchor='end'
+                 font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif'
+                 font-size='12'
+                 font-weight='600'
+                 fill='"
+        & SecondaryTextColor
+        & "'>"
+        & LastRefreshText
+        & "</text>"
+
+        & "</svg>"
+
+-- ============================================================
+-- POWER BI SAFE SVG ENCODING
+-- ============================================================
+RETURN
+    "data:image/svg+xml;utf8,"
+        & SUBSTITUTE(
+            SUBSTITUTE(
+                SUBSTITUTE(
+                    SUBSTITUTE(
+                        SUBSTITUTE(
+                            SVG,
+                            "#",
+                            "%23"
+                        ),
+                        "%",
+                        "%25"
+                    ),
+                    "%2523",
+                    "%23"
+                ),
+                "<",
+                "%3C"
+            ),
+            ">",
+            "%3E"
+        )
