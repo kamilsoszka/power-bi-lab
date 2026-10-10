@@ -8,7 +8,7 @@ Power BI development lab featuring advanced DAX measures, Power Query transforma
 
 Interactive Power BI report presenting professional experience, Microsoft certifications, analytics, data engineering, and AI capabilities.
 
-[Open Professional Profile in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
+[Open Professional Profile in Power BI](https://app.powerbi.com/view?r=eyJrIjoiYTJlZWUxYTUtOGQxNS00ODU3LWIxNjktYzIxMDY3ZGIwZWM5IiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
 
 #### Light mode
 
@@ -24,7 +24,7 @@ Interactive Power BI report presenting professional experience, Microsoft certif
 
 Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, Europe/Warsaw time-zone handling, and semantic model refresh metadata.
 
-[Open Workday Monitor in Power BI](https://app.powerbi.com/view?r=eyJrIjoiYTJlZWUxYTUtOGQxNS00ODU3LWIxNjktYzIxMDY3ZGIwZWM5IiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
+[Open Workday Monitor in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
 
 #### Light mode
 
