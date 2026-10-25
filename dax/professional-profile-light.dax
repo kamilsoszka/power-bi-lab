@@ -1,184 +1,148 @@
-Professional Profile SVG Light = 
+Professional Profile SVG Light =
 VAR CurrentDate = TODAY()
 VAR PBIStartDate = DATE(2018, 9, 1)
 VAR PBITotalMonths = MAX(0, DATEDIFF(PBIStartDate, CurrentDate, MONTH))
-VAR PBIYears = QUOTIENT(PBITotalMonths, 12)
-VAR PBIRemainingMonths = MOD(PBITotalMonths, 12)
-VAR PBIExperienceText = PBIYears & "y " & PBIRemainingMonths & "m"
+VAR PBIExperienceText = QUOTIENT(PBITotalMonths, 12) & "y " & MOD(PBITotalMonths, 12) & "m"
 VAR FabricStartDate = DATE(2026, 6, 15)
 VAR FabricHasStarted = CurrentDate >= FabricStartDate
 VAR FabricTotalMonths = IF(FabricHasStarted, MAX(0, DATEDIFF(FabricStartDate, CurrentDate, MONTH)), 0)
-VAR FabricYears = QUOTIENT(FabricTotalMonths, 12)
-VAR FabricRemainingMonths = MOD(FabricTotalMonths, 12)
-VAR FabricExperienceText = IF(FabricHasStarted, FabricYears & "y " & FabricRemainingMonths & "m", "Not started")
+VAR FabricExperienceText = IF(FabricHasStarted, QUOTIENT(FabricTotalMonths, 12) & "y " & MOD(FabricTotalMonths, 12) & "m", "Not started")
 
--- ============================================================
--- LAST REFRESH WITH WARSAW DST
--- ============================================================
-VAR LastRefreshUtc = MAX(RefreshInfo[LastRefreshUTC])
-VAR HasRefreshTimestamp = NOT ISBLANK(LastRefreshUtc)
-VAR RefreshYear = IF(HasRefreshTimestamp, YEAR(LastRefreshUtc), YEAR(CurrentDate))
-VAR RefreshLastDayOfMarch = DATE(RefreshYear, 3, 31)
-VAR RefreshLastSundayOfMarch = RefreshLastDayOfMarch - MOD(WEEKDAY(RefreshLastDayOfMarch, 2), 7)
-VAR RefreshDstStartUtc = RefreshLastSundayOfMarch + TIME(1, 0, 0)
-VAR RefreshLastDayOfOctober = DATE(RefreshYear, 10, 31)
-VAR RefreshLastSundayOfOctober = RefreshLastDayOfOctober - MOD(WEEKDAY(RefreshLastDayOfOctober, 2), 7)
-VAR RefreshDstEndUtc = RefreshLastSundayOfOctober + TIME(1, 0, 0)
-VAR IsRefreshDaylightSavingTime =
-    HasRefreshTimestamp
-        && LastRefreshUtc >= RefreshDstStartUtc
-        && LastRefreshUtc < RefreshDstEndUtc
-VAR RefreshUtcOffsetHours = IF(IsRefreshDaylightSavingTime, 2, 1)
-VAR RefreshTimeZoneName = IF(IsRefreshDaylightSavingTime, "CEST", "CET")
-VAR LastRefreshLocalDateTime =
-    IF(HasRefreshTimestamp, LastRefreshUtc + DIVIDE(RefreshUtcOffsetHours, 24), BLANK())
-VAR RefreshTimestamp =
-    IF(
-        HasRefreshTimestamp,
-        FORMAT(LastRefreshLocalDateTime, "dd MMM yyyy HH:mm:ss") & " " & RefreshTimeZoneName,
-        "Not available"
-    )
+-- Warsaw CET / CEST generated timestamp, pure DAX
+VAR GeneratedUtc = UTCNOW()
+VAR GeneratedYear = YEAR(GeneratedUtc)
+VAR LastDayOfMarch = DATE(GeneratedYear, 3, 31)
+VAR LastSundayOfMarch = LastDayOfMarch - MOD(WEEKDAY(LastDayOfMarch, 2), 7)
+VAR DstStartUtc = LastSundayOfMarch + TIME(1, 0, 0)
+VAR LastDayOfOctober = DATE(GeneratedYear, 10, 31)
+VAR LastSundayOfOctober = LastDayOfOctober - MOD(WEEKDAY(LastDayOfOctober, 2), 7)
+VAR DstEndUtc = LastSundayOfOctober + TIME(1, 0, 0)
+VAR IsDst = GeneratedUtc >= DstStartUtc && GeneratedUtc < DstEndUtc
+VAR UtcOffsetHours = IF(IsDst, 2, 1)
+VAR TimeZoneName = IF(IsDst, "CEST", "CET")
+VAR GeneratedLocal = GeneratedUtc + DIVIDE(UtcOffsetHours, 24)
+VAR GeneratedTimestamp = FORMAT(GeneratedLocal, "dd MMM yyyy HH:mm:ss") & " " & TimeZoneName
 
--- ============================================================
--- CV LIGHT MODE THEME
--- ============================================================
-VAR PageBackgroundColor = "#EEF2F1"
-VAR MainCardColor = "#FFFFFF"
-VAR SidebarColor = "#171B1A"
-VAR SidebarPanelColor = "#222827"
-VAR SidebarLineColor = "#65706C"
-VAR SidebarTextColor = "#F7FAF9"
-VAR SidebarMutedColor = "#C6CECB"
-VAR PrimaryTextColor = "#111716"
-VAR SecondaryTextColor = "#3F514B"
-VAR MutedTextColor = "#6B7B75"
-VAR DividerColor = "#919C98"
-VAR MicrosoftBlue = "#1678B8"
-VAR MicrosoftBlueDark = "#105A8A"
-VAR MicrosoftBlueBackground = "#E6F4FF"
-VAR PowerBIColor = "#E5BE4F"
-VAR PowerBIDarkColor = "#725B00"
-VAR PowerBIBackgroundColor = "#FFF4CC"
-VAR PowerBIBorderColor = "#E5BE4F"
-VAR FabricColor = "#168A5B"
-VAR FabricDarkColor = "#0F6A45"
-VAR FabricBackgroundColor = "#E5F7EC"
-VAR FabricBorderColor = "#70C998"
-VAR AIColor = "#6954A3"
-VAR AIDarkColor = "#513B8A"
-VAR AIBackgroundColor = "#F0EAFF"
-VAR AIBorderColor = "#AA91E8"
-VAR CertificationColor = "#4DD394"
+-- Theme
 VAR WhiteColor = "#FFFFFF"
+VAR MainTextColor = "#15211F"
+VAR SecondaryTextColor = "#435B56"
+VAR MutedTextColor = "#71837F"
+VAR DividerColor = "#CCD8D5"
+VAR FabricDarkColor = "#075F57"
+VAR FabricDeepColor = "#043F3B"
+VAR FabricGreenColor = "#27B98C"
+VAR FabricTealColor = "#078F7F"
+VAR FabricMintColor = "#73E2B2"
+VAR FabricAquaColor = "#61DFCC"
+VAR FabricPaleColor = "#E6F8F1"
+VAR FabricSoftColor = "#CFF3E6"
+VAR PowerBIColor = "#F2C94C"
+VAR PowerBIDarkColor = "#725A00"
+VAR PowerBIPaleColor = "#FFF7D6"
 
--- ============================================================
--- SVG: SAME CONTENT, CV-STYLE TWO-COLUMN LAYOUT
--- ============================================================
+-- Photo embedded directly in DAX, no Power Query and no external URL
+VAR PhotoDataUri = "data:image/jpeg;base64,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"
+
 VAR SVG =
-    "<svg xmlns='http://www.w3.org/2000/svg' width='1000' height='820' viewBox='0 0 1000 820'>"
-        & "<rect x='0' y='0' width='1000' height='820' fill='" & PageBackgroundColor & "'/>"
-        & "<rect x='20' y='20' width='960' height='780' rx='20' fill='" & MainCardColor & "' stroke='" & DividerColor & "' stroke-width='1.5'/>"
-        & "<path d='M40 20 H310 V800 H40 Q20 800 20 780 V40 Q20 20 40 20 Z' fill='" & SidebarColor & "'/>"
-        & "<rect x='20' y='20' width='290' height='8' rx='4' fill='" & MicrosoftBlue & "'/>"
+    "<svg xmlns='http://www.w3.org/2000/svg' width='1000' height='1180' viewBox='0 0 1000 1180'>"
+    & "<defs>"
+    & "<linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#EAF2F0'/><stop offset='100%' stop-color='#DDEAE7'/></linearGradient>"
+    & "<linearGradient id='side' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#064F48'/><stop offset='48%' stop-color='#078F7F'/><stop offset='100%' stop-color='#65E0B2'/></linearGradient>"
+    & "<linearGradient id='accent' x1='0' y1='0' x2='1' y2='0'><stop offset='0%' stop-color='#075F57'/><stop offset='45%' stop-color='#27B98C'/><stop offset='100%' stop-color='#73E2B2'/></linearGradient>"
+    & "<linearGradient id='panel' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#F1FCF8'/><stop offset='100%' stop-color='#CFF3E6'/></linearGradient>"
+    & "<filter id='shadow' x='-20%' y='-20%' width='140%' height='140%'><feDropShadow dx='0' dy='7' stdDeviation='12' flood-color='#193D36' flood-opacity='.16'/></filter>"
+    & "<filter id='soft' x='-30%' y='-30%' width='160%' height='160%'><feDropShadow dx='0' dy='4' stdDeviation='6' flood-color='#033C36' flood-opacity='.22'/></filter>"
+    & "<clipPath id='photoClip'><circle cx='173' cy='156' r='74'/></clipPath>"
+    & "</defs>"
+    & "<rect width='1000' height='1180' fill='url(#bg)'/>"
+    & "<rect x='24' y='24' width='952' height='1132' rx='18' fill='#FFFFFF' filter='url(#shadow)'/>"
+    & "<path d='M42 24H322V1156H42Q24 1156 24 1138V42Q24 24 42 24Z' fill='url(#side)'/>"
+    & "<path d='M24 24H322V115C249 102 179 112 115 145C72 167 43 196 24 227Z' fill='#73E2B2' opacity='.42'/>"
+    & "<path d='M24 174C90 125 175 107 286 126L322 132V215C236 202 162 217 99 260C66 282 41 308 24 339Z' fill='#61DFCC' opacity='.31'/>"
+    & "<path d='M24 312C88 270 165 251 255 263L322 272V346C238 334 162 350 101 390C68 411 42 438 24 469Z' fill='#043F3B' opacity='.28'/>"
 
-        -- SIDEBAR: PROFILE
-        & "<rect x='62' y='54' width='206' height='164' rx='20' fill='" & SidebarPanelColor & "' stroke='" & SidebarLineColor & "' stroke-width='1.2'/>"
-        & "<circle cx='165' cy='125' r='47' fill='" & MicrosoftBlueBackground & "' stroke='" & MicrosoftBlue & "' stroke-width='2'/>"
-        & "<text x='165' y='137' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='37' font-weight='700' fill='" & MicrosoftBlue & "'>KS</text>"
-        & "<text x='165' y='193' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='11' font-weight='600' fill='" & SidebarMutedColor & "'>POWER BI · FABRIC · AI</text>"
+    -- Embedded circular photo
+    & "<circle cx='173' cy='156' r='82' fill='#FFFFFF' opacity='.98' filter='url(#soft)'/>"
+    & "<image href='" & PhotoDataUri & "' x='99' y='82' width='148' height='148' preserveAspectRatio='xMidYMid slice' clip-path='url(#photoClip)'/>"
+    & "<circle cx='173' cy='156' r='74' fill='none' stroke='#FFFFFF' stroke-width='4'/>"
 
-        -- SIDEBAR: EDUCATION
-        & "<text x='62' y='260' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & SidebarTextColor & "'>EDUCATION</text>"
-        & "<line x1='62' y1='271' x2='268' y2='271' stroke='" & SidebarLineColor & "' stroke-width='1.5'/>"
-        & "<circle cx='79' cy='307' r='16' fill='" & MicrosoftBlue & "'/>"
-        & "<text x='79' y='312' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='10' font-weight='700' fill='" & WhiteColor & "'>PhD</text>"
-        & "<text x='106' y='300' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='13' font-weight='700' fill='" & SidebarTextColor & "'>Decision Support</text>"
-        & "<text x='106' y='320' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='13' font-weight='700' fill='" & SidebarTextColor & "'>Systems</text>"
+    -- Sidebar identity
+    & "<text x='173' y='280' text-anchor='middle' font-family='Segoe UI,Arial' font-size='28' font-weight='700' fill='#FFFFFF'>KAMIL SOSZKA</text>"
+    & "<text x='173' y='308' text-anchor='middle' font-family='Segoe UI,Arial' font-size='15' font-weight='700' letter-spacing='1.2' fill='#D9F4EC'>AI-DRIVEN SOLUTION</text>"
+    & "<text x='173' y='327' text-anchor='middle' font-family='Segoe UI,Arial' font-size='15' font-weight='700' letter-spacing='1.2' fill='#D9F4EC'>ARCHITECT</text>"
 
-        -- SIDEBAR: CERTIFICATIONS
-        & "<text x='62' y='370' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & SidebarTextColor & "'>CERTIFICATIONS</text>"
-        & "<line x1='62' y1='381' x2='268' y2='381' stroke='" & SidebarLineColor & "' stroke-width='1.5'/>"
-        & "<circle cx='79' cy='417' r='13' fill='" & CertificationColor & "'/><text x='79' y='421' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='8' font-weight='700' fill='" & PrimaryTextColor & "'>OK</text>"
-        & "<text x='105' y='413' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='14' font-weight='700' fill='" & SidebarTextColor & "'>PL-300</text><text x='105' y='431' font-family='Segoe UI,Arial,sans-serif' font-size='10' fill='" & SidebarMutedColor & "'>Power BI Data Analyst</text>"
-        & "<circle cx='79' cy='472' r='13' fill='" & CertificationColor & "'/><text x='79' y='476' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='8' font-weight='700' fill='" & PrimaryTextColor & "'>OK</text>"
-        & "<text x='105' y='468' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='14' font-weight='700' fill='" & SidebarTextColor & "'>DP-600</text><text x='105' y='486' font-family='Segoe UI,Arial,sans-serif' font-size='10' fill='" & SidebarMutedColor & "'>Fabric Analytics Engineer</text>"
-        & "<circle cx='79' cy='527' r='13' fill='" & CertificationColor & "'/><text x='79' y='531' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='8' font-weight='700' fill='" & PrimaryTextColor & "'>OK</text>"
-        & "<text x='105' y='523' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='14' font-weight='700' fill='" & SidebarTextColor & "'>DP-700</text><text x='105' y='541' font-family='Segoe UI,Arial,sans-serif' font-size='10' fill='" & SidebarMutedColor & "'>Fabric Data Engineer</text>"
-        & "<circle cx='79' cy='582' r='13' fill='" & CertificationColor & "'/><text x='79' y='586' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='8' font-weight='700' fill='" & PrimaryTextColor & "'>OK</text>"
-        & "<text x='105' y='578' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='14' font-weight='700' fill='" & SidebarTextColor & "'>DP-800</text><text x='105' y='596' font-family='Segoe UI,Arial,sans-serif' font-size='10' fill='" & SidebarMutedColor & "'>SQL AI Developer</text>"
+    -- Sidebar profile
+    & "<text x='58' y='387' font-family='Segoe UI,Arial' font-size='18' font-weight='700' fill='#FFFFFF'>PROFILE</text>"
+    & "<line x1='58' y1='400' x2='288' y2='400' stroke='#D9F4EC' opacity='.58'/>"
+    & "<text x='58' y='430' font-family='Segoe UI,Arial' font-size='15' fill='#D9F4EC'>Power BI</text>"
+    & "<text x='58' y='453' font-family='Segoe UI,Arial' font-size='15' fill='#D9F4EC'>Microsoft Fabric</text>"
+    & "<text x='58' y='476' font-family='Segoe UI,Arial' font-size='15' fill='#D9F4EC'>Data Engineering</text>"
+    & "<text x='58' y='499' font-family='Segoe UI,Arial' font-size='15' fill='#D9F4EC'>AI Solutions</text>"
+    & "<text x='58' y='522' font-family='Segoe UI,Arial' font-size='15' fill='#D9F4EC'>Decision Support Systems</text>"
 
-        -- SIDEBAR: ORIGINAL CAPABILITY GROUPS
-        & "<text x='62' y='650' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & SidebarTextColor & "'>FOCUS AREAS</text>"
-        & "<line x1='62' y1='661' x2='268' y2='661' stroke='" & SidebarLineColor & "' stroke-width='1.5'/>"
-        & "<text x='62' y='691' font-family='Segoe UI,Arial,sans-serif' font-size='12' font-weight='600' fill='" & SidebarMutedColor & "'>Analytics</text>"
-        & "<text x='62' y='717' font-family='Segoe UI,Arial,sans-serif' font-size='12' font-weight='600' fill='" & SidebarMutedColor & "'>Data Engineering</text>"
-        & "<text x='62' y='743' font-family='Segoe UI,Arial,sans-serif' font-size='12' font-weight='600' fill='" & SidebarMutedColor & "'>AI Solutions</text>"
+    -- Education
+    & "<text x='58' y='578' font-family='Segoe UI,Arial' font-size='18' font-weight='700' fill='#FFFFFF'>EDUCATION</text>"
+    & "<line x1='58' y1='591' x2='288' y2='591' stroke='#D9F4EC' opacity='.58'/>"
+    & "<circle cx='75' cy='629' r='17' fill='#FFFFFF'/><text x='75' y='634' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13' font-weight='700' fill='#075F57'>PhD</text>"
+    & "<text x='105' y='622' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#FFFFFF'>Decision Support</text>"
+    & "<text x='105' y='641' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#FFFFFF'>Systems</text>"
 
-        -- MAIN: HEADER
-        & "<text x='350' y='76' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='38' font-weight='700' fill='" & PrimaryTextColor & "'>KAMIL SOSZKA</text>"
-        & "<text x='352' y='106' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='17' font-weight='700' letter-spacing='0.6' fill='" & MicrosoftBlueDark & "'>AI-DRIVEN SOLUTION ARCHITECT</text>"
-        & "<text x='352' y='135' font-family='Segoe UI,Arial,sans-serif' font-size='12' font-weight='600' fill='" & SecondaryTextColor & "'>Power BI  |  Microsoft Fabric  |  Data Engineering  |  AI</text>"
+    -- Certifications
+    & "<text x='58' y='700' font-family='Segoe UI,Arial' font-size='18' font-weight='700' fill='#FFFFFF'>CERTIFICATIONS</text>"
+    & "<line x1='58' y1='713' x2='288' y2='713' stroke='#D9F4EC' opacity='.58'/>"
+    & "<circle cx='73' cy='750' r='11' fill='#FFFFFF'/><path d='M68 750L72 754L79 746' fill='none' stroke='#075F57' stroke-width='2'/><text x='97' y='747' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#FFFFFF'>PL-300</text><text x='97' y='765' font-family='Segoe UI,Arial' font-size='13.5' fill='#D9F4EC'>Power BI Data Analyst</text>"
+    & "<circle cx='73' cy='805' r='11' fill='#FFFFFF'/><path d='M68 805L72 809L79 801' fill='none' stroke='#075F57' stroke-width='2'/><text x='97' y='802' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#FFFFFF'>DP-600</text><text x='97' y='820' font-family='Segoe UI,Arial' font-size='13.5' fill='#D9F4EC'>Fabric Analytics Engineer</text>"
+    & "<circle cx='73' cy='860' r='11' fill='#FFFFFF'/><path d='M68 860L72 864L79 856' fill='none' stroke='#075F57' stroke-width='2'/><text x='97' y='857' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#FFFFFF'>DP-700</text><text x='97' y='875' font-family='Segoe UI,Arial' font-size='13.5' fill='#D9F4EC'>Fabric Data Engineer</text>"
+    & "<circle cx='73' cy='915' r='11' fill='#FFFFFF'/><path d='M68 915L72 919L79 911' fill='none' stroke='#075F57' stroke-width='2'/><text x='97' y='912' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#FFFFFF'>DP-800</text><text x='97' y='930' font-family='Segoe UI,Arial' font-size='13.5' fill='#D9F4EC'>SQL AI Developer</text>"
 
-        -- MAIN: JOURNEY
-        & "<text x='352' y='181' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & PrimaryTextColor & "'>MICROSOFT DATA AND AI JOURNEY</text>"
-        & "<line x1='352' y1='192' x2='942' y2='192' stroke='" & DividerColor & "' stroke-width='1.5'/>"
+    -- Core stack
+    & "<text x='58' y='990' font-family='Segoe UI,Arial' font-size='18' font-weight='700' fill='#FFFFFF'>CORE STACK</text>"
+    & "<line x1='58' y1='1003' x2='288' y2='1003' stroke='#D9F4EC' opacity='.58'/>"
+    & "<rect x='58' y='1026' width='65' height='25' rx='12.5' fill='#FFFFFF'/><text x='90.5' y='1043' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#075F57'>DAX</text>"
+    & "<rect x='132' y='1026' width='69' height='25' rx='12.5' fill='#FFFFFF'/><text x='166.5' y='1043' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#075F57'>PySpark</text>"
+    & "<rect x='210' y='1026' width='57' height='25' rx='12.5' fill='#FFFFFF'/><text x='238.5' y='1043' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#075F57'>SQL</text>"
+    & "<rect x='58' y='1061' width='94' height='25' rx='12.5' fill='#FFFFFF'/><text x='105' y='1078' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#075F57'>Power BI</text>"
+    & "<rect x='161' y='1061' width='106' height='25' rx='12.5' fill='#FFFFFF'/><text x='214' y='1078' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#075F57'>Fabric</text>"
 
-        -- POWER BI BLOCK
-        & "<circle cx='370' cy='232' r='15' fill='" & PowerBIColor & "'/><text x='370' y='237' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='10' font-weight='700' fill='" & PowerBIDarkColor & "'>BI</text>"
-        & "<text x='400' y='223' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='16' font-weight='700' fill='" & PrimaryTextColor & "'>POWER BI EXPERIENCE</text>"
-        & "<text x='922' y='225' text-anchor='end' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='22' font-weight='700' fill='" & PowerBIDarkColor & "'>" & PBIExperienceText & "</text>"
-        & "<text x='400' y='246' font-family='Segoe UI,Arial,sans-serif' font-size='11' font-weight='600' fill='" & MutedTextColor & "'>Since September 2018</text>"
-        & "<circle cx='401' cy='274' r='3' fill='" & PowerBIDarkColor & "'/><text x='414' y='278' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>Power BI and Microsoft Fabric</text>"
-        & "<circle cx='401' cy='299' r='3' fill='" & PowerBIDarkColor & "'/><text x='414' y='303' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>Power Query and M</text>"
-        & "<circle cx='680' cy='274' r='3' fill='" & PowerBIDarkColor & "'/><text x='693' y='278' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>DAX and advanced modeling</text>"
-        & "<circle cx='680' cy='299' r='3' fill='" & PowerBIDarkColor & "'/><text x='693' y='303' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>Fabric Analytics Engineering</text>"
+    -- Main header
+    & "<rect x='322' y='24' width='654' height='12' fill='url(#accent)'/>"
+    & "<text x='368' y='90' font-family='Segoe UI,Arial' font-size='44' font-weight='700' fill='#15211F'>PROFESSIONAL</text>"
+    & "<text x='368' y='132' font-family='Segoe UI,Arial' font-size='44' font-weight='700' fill='#15211F'>PROFILE</text>"
+    & "<rect x='368' y='154' width='182' height='31' rx='15.5' fill='#E6F8F1'/><text x='459' y='175' text-anchor='middle' font-family='Segoe UI,Arial' font-size='14.5' font-weight='700' fill='#075F57'>AI-DRIVEN ARCHITECTURE</text>"
+    & "<line x1='368' y1='211' x2='930' y2='211' stroke='#CCD8D5' stroke-width='1.5'/>"
 
-        -- FABRIC BLOCK
-        & "<circle cx='370' cy='350' r='15' fill='" & FabricColor & "'/><text x='370' y='355' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='9' font-weight='700' fill='" & WhiteColor & "'>MF</text>"
-        & "<text x='400' y='341' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='16' font-weight='700' fill='" & PrimaryTextColor & "'>MICROSOFT FABRIC EXPERIENCE</text>"
-        & "<text x='922' y='343' text-anchor='end' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='22' font-weight='700' fill='" & FabricDarkColor & "'>" & FabricExperienceText & "</text>"
-        & "<text x='400' y='364' font-family='Segoe UI,Arial,sans-serif' font-size='11' font-weight='600' fill='" & MutedTextColor & "'>Since June 2026</text>"
-        & "<circle cx='401' cy='392' r='3' fill='" & FabricColor & "'/><text x='414' y='396' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>PySpark and SQL</text>"
-        & "<circle cx='401' cy='417' r='3' fill='" & FabricColor & "'/><text x='414' y='421' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>ETL and ELT pipelines</text>"
-        & "<circle cx='680' cy='392' r='3' fill='" & FabricColor & "'/><text x='693' y='396' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>Legacy systems</text>"
-        & "<circle cx='680' cy='417' r='3' fill='" & FabricColor & "'/><text x='693' y='421' font-family='Segoe UI,Arial,sans-serif' font-size='12' fill='" & SecondaryTextColor & "'>Enterprise architecture</text>"
+    -- Summary
+    & "<rect x='368' y='242' width='10' height='29' rx='5' fill='url(#accent)'/><text x='395' y='264' font-family='Segoe UI,Arial' font-size='21' font-weight='700' fill='#15211F'>SUMMARY</text>"
+    & "<text x='368' y='303' font-family='Segoe UI,Arial' font-size='16.5' fill='#435B56'><tspan x='368'>Solution architect focused on data platforms, semantic models,</tspan><tspan x='368' dy='22'>advanced analytics and AI-assisted decision support systems.</tspan><tspan x='368' dy='22'>Combines analytical engineering with architecture, automation</tspan><tspan x='368' dy='22'>and responsive information design.</tspan></text>"
 
-        -- MAIN: PROFESSIONAL SUMMARY
-        & "<text x='352' y='470' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & PrimaryTextColor & "'>PROFESSIONAL SUMMARY</text>"
-        & "<line x1='352' y1='481' x2='942' y2='481' stroke='" & DividerColor & "' stroke-width='1.5'/>"
+    -- Experience heading
+    & "<rect x='368' y='410' width='10' height='29' rx='5' fill='url(#accent)'/><text x='395' y='432' font-family='Segoe UI,Arial' font-size='21' font-weight='700' fill='#15211F'>EXPERIENCE</text><line x1='368' y1='450' x2='930' y2='450' stroke='#CCD8D5' stroke-width='1.2'/>"
 
-        -- ANALYTICS
-        & "<rect x='352' y='501' width='180' height='174' rx='14' fill='" & PowerBIBackgroundColor & "' stroke='" & PowerBIBorderColor & "' stroke-width='1.5'/>"
-        & "<rect x='368' y='517' width='40' height='32' rx='9' fill='" & PowerBIColor & "'/><text x='388' y='539' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='13' font-weight='700' fill='" & PowerBIDarkColor & "'>BI</text>"
-        & "<text x='419' y='539' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & PrimaryTextColor & "'>Analytics</text>"
-        & "<circle cx='370' cy='578' r='3' fill='" & PowerBIDarkColor & "'/><text x='383' y='582' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Power BI and Fabric</text>"
-        & "<circle cx='370' cy='604' r='3' fill='" & PowerBIDarkColor & "'/><text x='383' y='608' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Power Query and M</text>"
-        & "<circle cx='370' cy='630' r='3' fill='" & PowerBIDarkColor & "'/><text x='383' y='634' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Advanced DAX</text>"
-        & "<circle cx='370' cy='656' r='3' fill='" & PowerBIDarkColor & "'/><text x='383' y='660' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Semantic modeling</text>"
+    -- Power BI
+    & "<circle cx='386' cy='494' r='17' fill='#F2C94C'/><text x='386' y='499' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#725A00'>BI</text>"
+    & "<text x='417' y='489' font-family='Segoe UI,Arial' font-size='18.5' font-weight='700' fill='#15211F'>Power BI experience</text><text x='917' y='490' text-anchor='end' font-family='Segoe UI,Arial' font-size='23' font-weight='700' fill='#725A00'>" & PBIExperienceText & "</text><text x='417' y='510' font-family='Segoe UI,Arial' font-size='14.5' fill='#71837F'>Since September 2018</text>"
+    & "<rect x='368' y='533' width='562' height='106' rx='13' fill='#FFF7D6' stroke='#E8D378'/>"
+    & "<circle cx='391' cy='561' r='3' fill='#725A00'/><text x='405' y='565' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Advanced DAX engineering</text><circle cx='391' cy='590' r='3' fill='#725A00'/><text x='405' y='594' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Semantic modeling</text><circle cx='391' cy='619' r='3' fill='#725A00'/><text x='405' y='623' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Decision support systems</text>"
+    & "<circle cx='670' cy='561' r='3' fill='#725A00'/><text x='684' y='565' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Responsive report design</text><circle cx='670' cy='590' r='3' fill='#725A00'/><text x='684' y='594' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Dynamic SVG visualizations</text><circle cx='670' cy='619' r='3' fill='#725A00'/><text x='684' y='623' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Analytical automation</text>"
 
-        -- DATA ENGINEERING
-        & "<rect x='548' y='501' width='180' height='174' rx='14' fill='" & FabricBackgroundColor & "' stroke='" & FabricBorderColor & "' stroke-width='1.5'/>"
-        & "<rect x='564' y='517' width='40' height='32' rx='9' fill='" & FabricColor & "'/><text x='584' y='539' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='12' font-weight='700' fill='" & WhiteColor & "'>DE</text>"
-        & "<text x='615' y='539' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='14' font-weight='700' fill='" & PrimaryTextColor & "'>Data Eng.</text>"
-        & "<circle cx='566' cy='578' r='3' fill='" & FabricColor & "'/><text x='579' y='582' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>PySpark and SQL</text>"
-        & "<circle cx='566' cy='604' r='3' fill='" & FabricColor & "'/><text x='579' y='608' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>ETL and ELT pipelines</text>"
-        & "<circle cx='566' cy='630' r='3' fill='" & FabricColor & "'/><text x='579' y='634' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Legacy systems</text>"
-        & "<circle cx='566' cy='656' r='3' fill='" & FabricColor & "'/><text x='579' y='660' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Enterprise architecture</text>"
+    -- Fabric
+    & "<circle cx='386' cy='687' r='17' fill='#27B98C'/><text x='386' y='692' text-anchor='middle' font-family='Segoe UI,Arial' font-size='13' font-weight='700' fill='#FFFFFF'>MF</text>"
+    & "<text x='417' y='682' font-family='Segoe UI,Arial' font-size='18.5' font-weight='700' fill='#15211F'>Microsoft Fabric experience</text><text x='917' y='683' text-anchor='end' font-family='Segoe UI,Arial' font-size='23' font-weight='700' fill='#075F57'>" & FabricExperienceText & "</text><text x='417' y='703' font-family='Segoe UI,Arial' font-size='14.5' fill='#71837F'>Since June 2026</text>"
+    & "<rect x='368' y='726' width='562' height='106' rx='13' fill='url(#panel)' stroke='#73E2B2'/>"
+    & "<circle cx='391' cy='754' r='3' fill='#075F57'/><text x='405' y='758' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>PySpark and SQL</text><circle cx='391' cy='783' r='3' fill='#075F57'/><text x='405' y='787' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>ETL and ELT pipelines</text><circle cx='391' cy='812' r='3' fill='#075F57'/><text x='405' y='816' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Data platform integration</text>"
+    & "<circle cx='670' cy='754' r='3' fill='#075F57'/><text x='684' y='758' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Fabric analytics engineering</text><circle cx='670' cy='783' r='3' fill='#075F57'/><text x='684' y='787' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Enterprise architecture</text><circle cx='670' cy='812' r='3' fill='#075F57'/><text x='684' y='816' font-family='Segoe UI,Arial' font-size='15.5' fill='#435B56'>Legacy system modernization</text>"
 
-        -- AI SOLUTIONS
-        & "<rect x='744' y='501' width='198' height='174' rx='14' fill='" & AIBackgroundColor & "' stroke='" & AIBorderColor & "' stroke-width='1.5'/>"
-        & "<rect x='760' y='517' width='40' height='32' rx='9' fill='" & AIColor & "'/><text x='780' y='539' text-anchor='middle' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='12' font-weight='700' fill='" & WhiteColor & "'>AI</text>"
-        & "<text x='811' y='539' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='15' font-weight='700' fill='" & PrimaryTextColor & "'>AI Solutions</text>"
-        & "<circle cx='762' cy='578' r='3' fill='" & AIDarkColor & "'/><text x='775' y='582' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Copilot integrations</text>"
-        & "<circle cx='762' cy='604' r='3' fill='" & AIDarkColor & "'/><text x='775' y='608' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Azure OpenAI Service</text>"
-        & "<circle cx='762' cy='630' r='3' fill='" & AIDarkColor & "'/><text x='775' y='634' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>AI-driven architecture</text>"
-        & "<circle cx='762' cy='656' r='3' fill='" & AIDarkColor & "'/><text x='775' y='660' font-family='Segoe UI,Arial,sans-serif' font-size='11' fill='" & PrimaryTextColor & "'>Decision support systems</text>"
+    -- Skills
+    & "<rect x='368' y='877' width='10' height='29' rx='5' fill='url(#accent)'/><text x='395' y='899' font-family='Segoe UI,Arial' font-size='21' font-weight='700' fill='#15211F'>SKILL HIGHLIGHTS</text><line x1='368' y1='917' x2='930' y2='917' stroke='#CCD8D5'/>"
+    & "<circle cx='382' cy='951' r='5' fill='#27B98C'/><text x='401' y='956' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#15211F'>Analytics</text><text x='401' y='978' font-family='Segoe UI,Arial' font-size='14.5' fill='#435B56'>Power BI, advanced DAX,</text><text x='401' y='995' font-family='Segoe UI,Arial' font-size='14.5' fill='#435B56'>semantic modeling and SVG</text>"
+    & "<circle cx='572' cy='951' r='5' fill='#078F7F'/><text x='591' y='956' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#15211F'>Data Engineering</text><text x='591' y='978' font-family='Segoe UI,Arial' font-size='14.5' fill='#435B56'>PySpark, SQL, pipelines,</text><text x='591' y='995' font-family='Segoe UI,Arial' font-size='14.5' fill='#435B56'>ETL and ELT architecture</text>"
+    & "<circle cx='778' cy='951' r='5' fill='#73E2B2'/><text x='797' y='956' font-family='Segoe UI,Arial' font-size='16' font-weight='700' fill='#15211F'>AI Solutions</text><text x='797' y='978' font-family='Segoe UI,Arial' font-size='14.5' fill='#435B56'>Copilot, AI architecture</text><text x='797' y='995' font-family='Segoe UI,Arial' font-size='14.5' fill='#435B56'>and decision support</text>"
 
-        -- FOOTER
-        & "<line x1='352' y1='731' x2='942' y2='731' stroke='" & DividerColor & "' stroke-width='1'/>"
-        & "<text x='352' y='764' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='10' font-weight='600' letter-spacing='0.4' fill='" & MutedTextColor & "'>LAST REFRESHED</text>"
-        & "<text x='942' y='764' text-anchor='end' font-family='Segoe UI Semibold,Segoe UI,Arial,sans-serif' font-size='11' font-weight='600' fill='" & SecondaryTextColor & "'>" & RefreshTimestamp & "</text>"
-        & "</svg>"
+    -- Footer
+    & "<rect x='368' y='1031' width='562' height='55' rx='13' fill='#E6F8F1'/><text x='392' y='1065' font-family='Segoe UI,Arial' font-size='14.5' font-weight='700' fill='#075F57'>POWER BI  •  FABRIC  •  DAX  •  PYSPARK  •  SQL  •  AI</text>"
+    & "<line x1='368' y1='1112' x2='930' y2='1112' stroke='#CCD8D5'/><text x='368' y='1137' font-family='Segoe UI,Arial' font-size='13.5' font-weight='700' fill='#71837F'>GENERATED</text><text x='930' y='1137' text-anchor='end' font-family='Segoe UI,Arial' font-size='14.5' font-weight='600' fill='#435B56'>" & GeneratedTimestamp & "</text>"
+    & "</svg>"
 
 RETURN
     "data:image/svg+xml;utf8,"
@@ -186,16 +150,12 @@ RETURN
             SUBSTITUTE(
                 SUBSTITUTE(
                     SUBSTITUTE(
-                        SUBSTITUTE(SVG, "#", "%23"),
-                        "%",
-                        "%25"
+                        SUBSTITUTE(SVG, "%", "%25"),
+                        "#", "%23"
                     ),
-                    "%2523",
-                    "%23"
+                    "<", "%3C"
                 ),
-                "<",
-                "%3C"
+                ">", "%3E"
             ),
-            ">",
-            "%3E"
+            " ", "%20"
         )
