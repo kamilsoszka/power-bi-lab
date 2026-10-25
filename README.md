@@ -1,6 +1,6 @@
 # Power BI Lab
 
-Power BI development lab featuring advanced DAX measures, Power Query transformations, semantic models, responsive report design, and dynamic SVG visualizations in coordinated light and dark modes.
+Power BI development and portfolio project featuring advanced DAX, semantic modeling, responsive report design, and dynamic SVG visualizations in coordinated light and dark modes.
 
 ## Live Reports
 
@@ -12,38 +12,36 @@ Interactive Power BI report presenting professional experience, Microsoft certif
 
 #### Light mode
 
-![Professional Profile light mode](assets/images/professional-profile-light.png)
+![Professional Profile Light](assets/images/professional-profile-light.png)
 
 #### Dark mode
 
-![Professional Profile dark mode](assets/images/professional-profile-dark.png)
-
----
+![Professional Profile Dark](assets/images/professional-profile-dark.png)
 
 ### Workday Monitor
 
-Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, Europe/Warsaw time-zone handling, and semantic model refresh metadata.
+Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, and Europe/Warsaw CET and CEST handling implemented directly in DAX.
 
 [Open Workday Monitor in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
 
 #### Light mode
 
-![Workday Monitor light mode](assets/images/workday-monitor-light.png)
+![Workday Monitor Light](assets/images/workday-monitor-light.png)
 
 #### Dark mode
 
-![Workday Monitor dark mode](assets/images/workday-monitor-dark.png)
+![Workday Monitor Dark](assets/images/workday-monitor-dark.png)
 
 ## Project Features
 
 - Advanced DAX measures
-- Dynamic SVG visualizations
-- Coordinated light and dark mode designs
-- Power BI semantic models
-- Power Query transformations
-- Desktop and mobile report layouts
-- Europe/Warsaw CET and CEST handling
-- Semantic model refresh metadata
+- Self-contained SVG visualizations returned as Image URL values
+- Coordinated light and dark themes inspired by Microsoft Fabric
+- Embedded profile photo stored directly in DAX as Base64
+- Responsive desktop and mobile report layouts
+- Europe/Warsaw CET and CEST handling implemented in DAX
+- Dynamic workday progress and status calculations
+- Semantic modeling
 - Reusable Power BI development components
 - Public Power BI report demonstrations
 - Power BI Pro workspace and app deployment
@@ -80,45 +78,44 @@ The `dax` directory contains four complete Power BI measures:
 - `workday-monitor-light.dax`
 - `workday-monitor-dark.dax`
 
-Each measure generates a self-contained SVG visualization returned as a Power BI-compatible data URI.
+Each measure generates a complete SVG visualization and returns it as a Power BI-compatible data URI.
+
+The current measures are self-contained and do not require the `RefreshInfo` table. The displayed `GENERATED` timestamp represents the DAX measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
 
 ## Power Query Scripts
 
-The `power-query` directory contains three complete Power Query scripts:
+The `power-query` directory contains earlier supporting and reference scripts retained for development history and experimentation:
 
 - `professional-profile.pq`
 - `workday-monitor.pq`
 - `refresh-info.pq`
 
-Required query names in Power BI:
-
-```text
-Professional Profile
-Workday Monitor
-RefreshInfo
-```
+These scripts are not required by the current four DAX SVG measures.
 
 ## Installation
 
-### 1. Create the supporting tables
+### 1. Add a DAX measure
 
-1. Open **Transform data** in Power BI Desktop.
-2. Select **New source**.
-3. Select **Blank query**.
-4. Open **Advanced Editor**.
-5. Remove the existing code.
-6. Paste the complete contents of the corresponding `.pq` file.
-7. Assign the required query name.
-8. Select **Close & Apply**.
+1. Open the Power BI Desktop model.
+2. Select the table that should store the measure.
+3. Select **New measure**.
+4. Open the corresponding `.dax` file from the `dax` directory.
+5. Copy and paste the complete measure definition.
+6. Set **Data category** to **Image URL**.
+7. Add the measure to a visual that supports Image URL values.
 
-### 2. Add the DAX measures
+No Power Query supporting table is required for the current SVG measures.
 
-1. Select the appropriate supporting table.
-2. Select **New measure**.
-3. Paste the complete contents of the corresponding `.dax` file.
-4. Assign the measure to the correct home table.
-5. Set **Data category** to **Image URL**.
-6. Add the measure to a visual supporting Image URL values.
+### 2. Configure the visual
+
+For best results:
+
+- disable the visual title,
+- disable the visual background,
+- disable the visual border,
+- minimize internal padding,
+- preserve the intended SVG aspect ratio,
+- validate rendering in both Power BI Desktop and Power BI Service.
 
 ## Workday Monitor Configuration
 
@@ -133,46 +130,52 @@ Workdays:   Monday to Friday
 
 The schedule can be changed in both Workday Monitor measures:
 
-```DAX
-VAR WorkStartTime =
-    TIME(8, 0, 0)
-
-VAR WorkEndTime =
-    TIME(16, 0, 0)
+```dax
+VAR WorkStartTime = TIME(8, 0, 0)
+VAR WorkEndTime = TIME(16, 0, 0)
 ```
 
-The same values should be maintained in the light and dark measures.
+Keep the same values in the light and dark measures to preserve consistent calculations.
 
 ## Time-Zone Handling
 
-The Workday Monitor supports Europe/Warsaw daylight-saving-time conversion:
+The measures calculate Europe/Warsaw daylight-saving-time conversion directly in DAX:
 
 ```text
 CET  = UTC+1
 CEST = UTC+2
 ```
 
-The applicable offset is calculated using the final Sunday of March and the final Sunday of October.
+The applicable offset is determined using the final Sunday of March and the final Sunday of October.
 
-## Refresh Metadata
+## Generated Timestamp
 
-The `RefreshInfo` query records the semantic model refresh timestamp in UTC:
+The footer displays `GENERATED` followed by the current Europe/Warsaw date and time calculated from `UTCNOW()`.
 
-```powerquery
-DateTimeZone.FixedUtcNow()
+```dax
+VAR CurrentUtcDateTime = UTCNOW()
 ```
 
-The query creates the following column:
+This value represents measure evaluation time. Pure DAX does not provide a reliable semantic model refresh timestamp without an external metadata source or supporting refresh table.
 
-```text
-LastRefreshUTC
-```
+## Professional Profile
 
-The DAX measures convert the UTC timestamp to Europe/Warsaw local time. The query records refresh metadata but does not configure or initiate scheduled refresh.
+The Professional Profile measures include:
+
+- an embedded circular profile photo,
+- professional summary,
+- Power BI and Microsoft Fabric experience calculations,
+- certifications,
+- education,
+- analytics, data engineering, and AI capabilities,
+- coordinated light and dark palettes,
+- a DAX-generated Europe/Warsaw timestamp.
+
+The profile photo is embedded directly in the measure as a Base64 JPEG and does not depend on an external image URL.
 
 ## Light and Dark Modes
 
-Both report components are available in coordinated light and dark variants:
+Both report components are available in coordinated variants:
 
 ```text
 Professional Profile Light
@@ -181,52 +184,26 @@ Workday Monitor Light
 Workday Monitor Dark
 ```
 
-The paired measures preserve the same layout, calculations, labels, dimensions, font family, and information hierarchy.
+Each light and dark pair preserves the same:
+
+- layout,
+- calculations,
+- labels,
+- dimensions,
+- font hierarchy,
+- information structure.
+
+Only the visual color system changes between modes.
 
 ## Mobile Layout
 
-Both reports include layouts designed for Power BI mobile experiences.
+Both reports include layouts intended for Power BI mobile experiences. Rendering should be validated separately in:
 
-Rendering should be validated separately in:
-
-- Power BI Desktop
-- Power BI Service
-- Power BI mobile applications
-- different browser zoom levels
-- PDF exports
-- PowerPoint exports
-
-## Known Limitations
-
-- The project is intended for development, demonstration, portfolio, and educational use.
-- The Workday Monitor is not an employee attendance or time-registration system.
-- Current time and progress values depend on report or semantic model recalculation.
-- `UTCNOW()` does not provide a continuously running client-side clock.
-- Public holidays are not included.
-- Weekends are defined as Saturday and Sunday.
-- Overnight shifts crossing midnight are not supported by the default configuration.
-- The default schedule is fixed at 08:00-16:00.
-- The `RefreshInfo` query records metadata but does not configure scheduled refresh.
-- SVG rendering can vary between Power BI environments and export formats.
-- Published reports are public and must not contain confidential or restricted information.
-
-## Project Status
-
-```text
-Project:     Power BI Lab
-Version:     1.0.0
-Status:      Development / Portfolio
-Endorsement: Promoted
-Platform:    Power BI Pro
-License:     MIT
-```
-
-## Disclaimer
-
-The content in this repository is experimental and must not be treated as production-ready or as an official source of business information.
-
-The public Power BI reports are provided for portfolio, demonstration, and educational purposes.
+- Power BI Desktop,
+- Power BI Service,
+- Power BI mobile applications,
+- different browser zoom levels.
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
