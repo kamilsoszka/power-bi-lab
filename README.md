@@ -61,10 +61,6 @@ power-bi-lab/
 │   ├── professional-profile-dark.dax
 │   ├── workday-monitor-light.dax
 │   └── workday-monitor-dark.dax
-├── power-query/
-│   ├── professional-profile.pq
-│   ├── refresh-info.pq
-│   └── workday-monitor.pq
 ├── LICENSE
 └── README.md
 ```
@@ -80,17 +76,7 @@ The `dax` directory contains four complete Power BI measures:
 
 Each measure generates a complete SVG visualization and returns it as a Power BI-compatible data URI.
 
-The current measures are self-contained and do not require the `RefreshInfo` table. The displayed `GENERATED` timestamp represents the DAX measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
-
-## Power Query Scripts
-
-The `power-query` directory contains earlier supporting and reference scripts retained for development history and experimentation:
-
-- `professional-profile.pq`
-- `workday-monitor.pq`
-- `refresh-info.pq`
-
-These scripts are not required by the current four DAX SVG measures.
+All four measures are self-contained and do not require Power Query or a `RefreshInfo` table. The displayed `GENERATED` timestamp represents the DAX measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
 
 ## Installation
 
@@ -104,7 +90,7 @@ These scripts are not required by the current four DAX SVG measures.
 6. Set **Data category** to **Image URL**.
 7. Add the measure to a visual that supports Image URL values.
 
-No Power Query supporting table is required for the current SVG measures.
+No Power Query query or supporting table is required for any of the current SVG measures.
 
 ### 2. Configure the visual
 
