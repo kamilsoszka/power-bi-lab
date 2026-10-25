@@ -1,6 +1,6 @@
 # Power BI Lab
 
-Power BI development and portfolio project featuring advanced DAX, semantic modeling, responsive report design, and dynamic SVG visualizations in coordinated light and dark modes.
+Power BI development and portfolio project featuring advanced DAX, Power Query, semantic modeling, responsive report design, and dynamic SVG visualizations in coordinated light and dark modes.
 
 ## Live Reports
 
@@ -20,7 +20,7 @@ Interactive Power BI report presenting professional experience, Microsoft certif
 
 ### Workday Monitor
 
-Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, and Europe/Warsaw CET and CEST handling implemented directly in DAX.
+Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, and Europe/Warsaw CET and CEST handling.
 
 [Open Workday Monitor in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
 
@@ -35,6 +35,7 @@ Dynamic workday monitoring report with schedule tracking, elapsed and remaining 
 ## Project Features
 
 - Advanced DAX measures
+- Power Query scripts used by the deployed Power BI Pro solution
 - Self-contained SVG visualizations returned as Image URL values
 - Coordinated light and dark themes inspired by Microsoft Fabric
 - Embedded profile photo stored directly in DAX as Base64
@@ -61,6 +62,9 @@ power-bi-lab/
 │   ├── professional-profile-dark.dax
 │   ├── workday-monitor-light.dax
 │   └── workday-monitor-dark.dax
+├── power-query/
+│   ├── professional-profile.pq
+│   └── workday-monitor.pq
 ├── LICENSE
 └── README.md
 ```
@@ -76,11 +80,33 @@ The `dax` directory contains four complete Power BI measures:
 
 Each measure generates a complete SVG visualization and returns it as a Power BI-compatible data URI.
 
-All four measures are self-contained and do not require Power Query or a `RefreshInfo` table. The displayed `GENERATED` timestamp represents the DAX measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
+The current SVG measures do not require a `RefreshInfo` table. The displayed `GENERATED` timestamp represents the measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
+
+## Power Query Scripts
+
+The `power-query` directory contains two Power Query scripts used by the deployed Power BI Pro solution:
+
+- `professional-profile.pq`
+- `workday-monitor.pq`
+
+These scripts remain active server-side components. The obsolete `refresh-info.pq` script was removed because the current SVG measures calculate the displayed `GENERATED` timestamp directly in DAX.
 
 ## Installation
 
-### 1. Add a DAX measure
+### 1. Add the Power Query scripts where required
+
+For the deployed solution that uses the scripts from the `power-query` directory:
+
+1. Open **Transform data** in Power BI Desktop.
+2. Select **New source** and then **Blank query**.
+3. Open **Advanced Editor**.
+4. Paste the complete contents of the corresponding `.pq` file.
+5. Assign the appropriate query name.
+6. Select **Close & Apply**.
+
+The two Power Query scripts remain part of the deployed Power BI Pro solution, but neither script provides refresh metadata to the SVG measures.
+
+### 2. Add a DAX measure
 
 1. Open the Power BI Desktop model.
 2. Select the table that should store the measure.
@@ -90,9 +116,7 @@ All four measures are self-contained and do not require Power Query or a `Refres
 6. Set **Data category** to **Image URL**.
 7. Add the measure to a visual that supports Image URL values.
 
-No Power Query query or supporting table is required for any of the current SVG measures.
-
-### 2. Configure the visual
+### 3. Configure the visual
 
 For best results:
 
@@ -136,7 +160,7 @@ The applicable offset is determined using the final Sunday of March and the fina
 
 ## Generated Timestamp
 
-The footer displays `GENERATED` followed by the current Europe/Warsaw date and time calculated from `UTCNOW()`.
+The SVG footer displays `GENERATED` followed by the current Europe/Warsaw date and time calculated from `UTCNOW()`.
 
 ```dax
 VAR CurrentUtcDateTime = UTCNOW()
@@ -170,16 +194,7 @@ Workday Monitor Light
 Workday Monitor Dark
 ```
 
-Each light and dark pair preserves the same:
-
-- layout,
-- calculations,
-- labels,
-- dimensions,
-- font hierarchy,
-- information structure.
-
-Only the visual color system changes between modes.
+Each light and dark pair preserves the same layout, calculations, labels, dimensions, font hierarchy, and information structure. Only the visual color system changes between modes.
 
 ## Mobile Layout
 
@@ -189,6 +204,13 @@ Both reports include layouts intended for Power BI mobile experiences. Rendering
 - Power BI Service,
 - Power BI mobile applications,
 - different browser zoom levels.
+
+## Known Limitations
+
+- The project is intended for development, demonstration, portfolio, and educational use.
+- Workday Monitor is not an employee attendance or time-registration system.
+- Current time and progress values depend on report or semantic model recalculation.
+- `UTCNOW()` does not provide a continuously running client-side clock.
 
 ## License
 
