@@ -6,12 +6,7 @@ VAR PBIExperienceText = QUOTIENT ( PBITotalMonths, 12 ) & "y " & MOD ( PBITotalM
 VAR FabricStartDate = DATE ( 2026, 6, 15 )
 VAR FabricHasStarted = CurrentDate >= FabricStartDate
 VAR FabricTotalMonths = IF ( FabricHasStarted, MAX ( 0, DATEDIFF ( FabricStartDate, CurrentDate, MONTH ) ), 0 )
-VAR FabricExperienceText =
-    IF (
-        FabricHasStarted,
-        QUOTIENT ( FabricTotalMonths, 12 ) & "y " & MOD ( FabricTotalMonths, 12 ) & "m",
-        "Not started"
-    )
+VAR FabricExperienceText = IF ( FabricHasStarted, QUOTIENT ( FabricTotalMonths, 12 ) & "y " & MOD ( FabricTotalMonths, 12 ) & "m", "Not started" )
 
 -- Warsaw CET / CEST generated timestamp, pure DAX
 VAR GeneratedUtc = UTCNOW ()
@@ -72,12 +67,10 @@ VAR SVG =
     & "<image href='" & PhotoDataUri & "' x='99' y='82' width='148' height='148' preserveAspectRatio='xMidYMid slice' clip-path='url(#photoClip)'/>"
     & "<circle cx='173' cy='156' r='74' fill='none' stroke='#F3FAF8' stroke-width='4'/>"
 
-    -- Sidebar identity
+    -- Sidebar identity and profile
     & "<text x='173' y='280' text-anchor='middle' font-family='Segoe UI,Arial' font-size='29' font-weight='700' fill='#F3FAF8'>KAMIL SOSZKA</text>"
     & "<text x='173' y='308' text-anchor='middle' font-family='Segoe UI,Arial' font-size='16' font-weight='700' letter-spacing='1.2' fill='#D7EEE8'>AI-DRIVEN SOLUTION</text>"
     & "<text x='173' y='327' text-anchor='middle' font-family='Segoe UI,Arial' font-size='16' font-weight='700' letter-spacing='1.2' fill='#D7EEE8'>ARCHITECT</text>"
-
-    -- Sidebar profile
     & "<text x='58' y='387' font-family='Segoe UI,Arial' font-size='19' font-weight='700' fill='#F3FAF8'>PROFILE</text>"
     & "<line x1='58' y1='400' x2='288' y2='400' stroke='#D7EEE8' opacity='.58'/>"
     & "<text x='58' y='430' font-family='Segoe UI,Arial' font-size='16' fill='#D7EEE8'>Power BI</text>"
@@ -93,10 +86,9 @@ VAR SVG =
     & "<text x='105' y='622' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F3FAF8'>Decision Support</text>"
     & "<text x='105' y='641' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F3FAF8'>Systems</text>"
 
-    -- Certifications, compact five-item layout
+    -- Certifications
     & "<text x='58' y='690' font-family='Segoe UI,Arial' font-size='19' font-weight='700' fill='#F3FAF8'>CERTIFICATIONS</text>"
     & "<line x1='58' y1='703' x2='288' y2='703' stroke='#D7EEE8' opacity='.58'/>"
-
     & "<circle cx='73' cy='737' r='10' fill='#F3FAF8'/><path d='M68 737L72 741L79 733' fill='none' stroke='#61E6BD' stroke-width='2'/><text x='97' y='734' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F3FAF8'>PL-300</text><text x='97' y='751' font-family='Segoe UI,Arial' font-size='14.5' fill='#D7EEE8'>Power BI Data Analyst</text>"
     & "<circle cx='73' cy='783' r='10' fill='#F3FAF8'/><path d='M68 783L72 787L79 779' fill='none' stroke='#61E6BD' stroke-width='2'/><text x='97' y='780' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F3FAF8'>DP-600</text><text x='97' y='797' font-family='Segoe UI,Arial' font-size='14.5' fill='#D7EEE8'>Fabric Analytics Engineer</text>"
     & "<circle cx='73' cy='829' r='10' fill='#F3FAF8'/><path d='M68 829L72 833L79 825' fill='none' stroke='#61E6BD' stroke-width='2'/><text x='97' y='826' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F3FAF8'>DP-700</text><text x='97' y='843' font-family='Segoe UI,Arial' font-size='14.5' fill='#D7EEE8'>Fabric Data Engineer</text>"
@@ -138,11 +130,11 @@ VAR SVG =
     & "<circle cx='391' cy='754' r='3' fill='#61E6BD'/><text x='405' y='758' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>PySpark and SQL</text><circle cx='391' cy='783' r='3' fill='#61E6BD'/><text x='405' y='787' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>ETL and ELT pipelines</text><circle cx='391' cy='812' r='3' fill='#61E6BD'/><text x='405' y='816' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Data platform integration</text>"
     & "<circle cx='670' cy='754' r='3' fill='#61E6BD'/><text x='684' y='758' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Fabric analytics engineering</text><circle cx='670' cy='783' r='3' fill='#61E6BD'/><text x='684' y='787' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Enterprise architecture</text><circle cx='670' cy='812' r='3' fill='#61E6BD'/><text x='684' y='816' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Legacy system modernization</text>"
 
-    -- Skills
+    -- Skills, fixed column widths and no overlap
     & "<rect x='368' y='877' width='10' height='29' rx='5' fill='url(#accent)'/><text x='395' y='899' font-family='Segoe UI,Arial' font-size='22' font-weight='700' fill='#F1F8F6'>SKILL HIGHLIGHTS</text><line x1='368' y1='917' x2='930' y2='917' stroke='#344E49'/>"
-    & "<circle cx='382' cy='951' r='5' fill='#24C99B'/><text x='401' y='956' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F1F8F6'>Analytics</text><text x='401' y='978' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Power BI and advanced DAX</text><text x='401' y='995' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Semantic models and SVG</text>"
-    & "<circle cx='572' cy='951' r='5' fill='#129F8C'/><text x='591' y='956' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F1F8F6'>Data Engineering</text><text x='591' y='978' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>PySpark and SQL pipelines</text><text x='591' y='995' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>ETL / ELT architecture</text>"
-    & "<circle cx='778' cy='951' r='5' fill='#67E8BC'/><text x='797' y='956' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F1F8F6'>AI Solutions</text><text x='797' y='978' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Copilot and AI design</text><text x='797' y='995' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Decision support systems</text>"
+    & "<circle cx='382' cy='951' r='5' fill='#24C99B'/><text x='401' y='956' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F1F8F6'>Analytics</text><text x='401' y='978' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Power BI &amp; DAX</text><text x='401' y='995' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Semantic models</text><text x='401' y='1012' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>SVG visuals</text>"
+    & "<circle cx='572' cy='951' r='5' fill='#129F8C'/><text x='591' y='956' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F1F8F6'>Data Engineering</text><text x='591' y='978' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>PySpark &amp; SQL</text><text x='591' y='995' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>ETL / ELT pipelines</text><text x='591' y='1012' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Data architecture</text>"
+    & "<circle cx='778' cy='951' r='5' fill='#67E8BC'/><text x='797' y='956' font-family='Segoe UI,Arial' font-size='17' font-weight='700' fill='#F1F8F6'>AI Solutions</text><text x='797' y='978' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Copilot &amp; AI</text><text x='797' y='995' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>Decision support</text><text x='797' y='1012' font-family='Segoe UI,Arial' font-size='15.5' fill='#C5D8D3'>AI architecture</text>"
 
     -- Footer
     & "<rect x='368' y='1031' width='562' height='55' rx='13' fill='#123B35'/><text x='392' y='1065' font-family='Segoe UI,Arial' font-size='15.5' font-weight='700' fill='#61E6BD'>POWER BI  •  FABRIC  •  DAX  •  PYSPARK  •  SQL  •  AI</text>"
