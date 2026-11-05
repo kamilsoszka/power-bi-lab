@@ -1,12 +1,39 @@
-Professional Profile SVG Dark =
+Professional Profile SVG Dark = 
 VAR CurrentDate = TODAY ()
+VAR CurrentMonthStart = DATE ( YEAR ( CurrentDate ), MONTH ( CurrentDate ), 1 )
+
+-- LinkedIn-style experience: every started calendar month is counted
 VAR PBIStartDate = DATE ( 2018, 9, 1 )
-VAR PBITotalMonths = MAX ( 0, DATEDIFF ( PBIStartDate, CurrentDate, MONTH ) )
-VAR PBIExperienceText = QUOTIENT ( PBITotalMonths, 12 ) & "y " & MOD ( PBITotalMonths, 12 ) & "m"
+VAR PBIStartMonth = DATE ( YEAR ( PBIStartDate ), MONTH ( PBIStartDate ), 1 )
+VAR PBIHasStarted = CurrentDate >= PBIStartDate
+VAR PBITotalMonths =
+    IF (
+        PBIHasStarted,
+        MAX ( 0, DATEDIFF ( PBIStartMonth, CurrentMonthStart, MONTH ) + 1 ),
+        0
+    )
+VAR PBIExperienceText =
+    IF (
+        PBIHasStarted,
+        QUOTIENT ( PBITotalMonths, 12 ) & "y " & MOD ( PBITotalMonths, 12 ) & "m",
+        "Not started"
+    )
+
 VAR FabricStartDate = DATE ( 2026, 6, 15 )
+VAR FabricStartMonth = DATE ( YEAR ( FabricStartDate ), MONTH ( FabricStartDate ), 1 )
 VAR FabricHasStarted = CurrentDate >= FabricStartDate
-VAR FabricTotalMonths = IF ( FabricHasStarted, MAX ( 0, DATEDIFF ( FabricStartDate, CurrentDate, MONTH ) ), 0 )
-VAR FabricExperienceText = IF ( FabricHasStarted, QUOTIENT ( FabricTotalMonths, 12 ) & "y " & MOD ( FabricTotalMonths, 12 ) & "m", "Not started" )
+VAR FabricTotalMonths =
+    IF (
+        FabricHasStarted,
+        MAX ( 0, DATEDIFF ( FabricStartMonth, CurrentMonthStart, MONTH ) + 1 ),
+        0
+    )
+VAR FabricExperienceText =
+    IF (
+        FabricHasStarted,
+        QUOTIENT ( FabricTotalMonths, 12 ) & "y " & MOD ( FabricTotalMonths, 12 ) & "m",
+        "Not started"
+    )
 
 -- Warsaw CET / CEST generated timestamp, pure DAX
 VAR GeneratedUtc = UTCNOW ()
@@ -108,7 +135,7 @@ VAR SVG =
     & "<rect x='322' y='24' width='654' height='12' fill='url(#accent)'/>"
     & "<text x='368' y='90' font-family='Segoe UI,Arial' font-size='45' font-weight='700' fill='#F1F8F6'>PROFESSIONAL</text>"
     & "<text x='368' y='132' font-family='Segoe UI,Arial' font-size='45' font-weight='700' fill='#F1F8F6'>PROFILE</text>"
-    & "<rect x='368' y='154' width='182' height='31' rx='15.5' fill='#123B35'/><text x='459' y='175' text-anchor='middle' font-family='Segoe UI,Arial' font-size='15.5' font-weight='700' fill='#61E6BD'>AI-DRIVEN ARCHITECTURE</text>"
+    & "<rect x='368' y='150' width='230' height='39' rx='19.5' fill='#123B35'/><text x='483' y='176' text-anchor='middle' font-family='Segoe UI,Arial' font-size='15.5' font-weight='700' fill='#61E6BD'>AI-DRIVEN ARCHITECTURE</text>"
     & "<line x1='368' y1='211' x2='930' y2='211' stroke='#344E49' stroke-width='1.5'/>"
 
     -- Summary
