@@ -1,9 +1,0 @@
-{
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
-  "name": "dfac04470c411ade6396",
-  "displayName": "Professional Profile SVG Dark",
-  "displayOption": "FitToPage",
-  "height": 720,
-  "width": 610,
-  "visibility": "HiddenInViewMode"
-}
