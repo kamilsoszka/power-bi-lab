@@ -10,27 +10,11 @@ Interactive Power BI report presenting professional experience, Microsoft certif
 
 [Open Professional Profile in Power BI](https://app.powerbi.com/view?r=eyJrIjoiYTJlZWUxYTUtOGQxNS00ODU3LWIxNjktYzIxMDY3ZGIwZWM5IiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
 
-#### Light mode
-
-![Professional Profile Light](assets/images/professional-profile-light.png)
-
-#### Dark mode
-
-![Professional Profile Dark](assets/images/professional-profile-dark.png)
-
 ### Workday Monitor
 
 Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, and Europe/Warsaw CET and CEST handling.
 
 [Open Workday Monitor in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
-
-#### Light mode
-
-![Workday Monitor Light](assets/images/workday-monitor-light.png)
-
-#### Dark mode
-
-![Workday Monitor Dark](assets/images/workday-monitor-dark.png)
 
 ## Project Features
 
@@ -51,52 +35,24 @@ Dynamic workday monitoring report with schedule tracking, elapsed and remaining 
 
 ```text
 power-bi-lab/
-├── assets/
-│   └── images/
-│       ├── professional-profile-light.png
-│       ├── professional-profile-dark.png
-│       ├── workday-monitor-light.png
-│       └── workday-monitor-dark.png
-├── dax/
-│   ├── professional-profile-light.dax
-│   ├── professional-profile-dark.dax
-│   ├── workday-monitor-light.dax
-│   └── workday-monitor-dark.dax
 ├── fabric-workspace/
-├── power-query/
-│   ├── professional-profile.pq
-│   └── workday-monitor.pq
 ├── LICENSE
 └── README.md
 ```
 
 ## DAX Measures
 
-The `dax` directory contains four complete Power BI measures:
-
-- `professional-profile-light.dax`
-- `professional-profile-dark.dax`
-- `workday-monitor-light.dax`
-- `workday-monitor-dark.dax`
-
-Each measure generates a complete SVG visualization and returns it as a Power BI-compatible data URI.
-
-The current SVG measures do not require a `RefreshInfo` table. The displayed `GENERATED` timestamp represents the measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
+The measures generate complete SVG visualizations and return them as Power BI-compatible data URIs. The current SVG measures do not require a `RefreshInfo` table. The displayed `GENERATED` timestamp represents the measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
 
 ## Power Query Scripts
 
-The `power-query` directory contains two Power Query scripts used by the deployed Power BI Pro solution:
-
-- `professional-profile.pq`
-- `workday-monitor.pq`
-
-These scripts remain active server-side components. The obsolete `refresh-info.pq` script was removed because the current SVG measures calculate the displayed `GENERATED` timestamp directly in DAX.
+The Power Query scripts used by the deployed Power BI Pro solution remain active server-side components. The obsolete `refresh-info.pq` script was removed because the current SVG measures calculate the displayed `GENERATED` timestamp directly in DAX.
 
 ## Installation
 
 ### 1. Add the Power Query scripts where required
 
-For the deployed solution that uses the scripts from the `power-query` directory:
+For the deployed solution that uses the Power Query scripts:
 
 1. Open **Transform data** in Power BI Desktop.
 2. Select **New source** and then **Blank query**.
@@ -112,10 +68,9 @@ The two Power Query scripts remain part of the deployed Power BI Pro solution, b
 1. Open the Power BI Desktop model.
 2. Select the table that should store the measure.
 3. Select **New measure**.
-4. Open the corresponding `.dax` file from the `dax` directory.
-5. Copy and paste the complete measure definition.
-6. Set **Data category** to **Image URL**.
-7. Add the measure to a visual that supports Image URL values.
+4. Copy and paste the complete measure definition from the `.dax` file.
+5. Set **Data category** to **Image URL**.
+6. Add the measure to a visual that supports Image URL values.
 
 ### 3. Configure the visual
 
