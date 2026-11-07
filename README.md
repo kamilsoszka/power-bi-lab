@@ -1,40 +1,35 @@
-# Power BI Lab
+# Power BI Lab: Advanced DAX & Dynamic SVG Visualizations
 
-Power BI portfolio repository featuring advanced DAX, Power Query, semantic modeling, responsive report design, and dynamic SVG visualizations with coordinated light and dark themes.
+[![Power BI](https://img.shields.io/badge/Power_BI-Developer_Mode_(PBIP)-F2C811?logo=powerbi&logoColor=black)](#)
+[![DAX](https://img.shields.io/badge/DAX-SVG_Data_URIs-blue)](#)
+[![Architecture](https://img.shields.io/badge/Architecture-TMDL_Semantic_Model-green)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Live Reports
+Power BI portfolio laboratory featuring custom data visualizations generated entirely in DAX as dynamic SVG Data URIs, automated CET/CEST time-zone conversions, and developer-mode project structure (PBIP).
 
-### Professional Profile
+---
 
-Interactive Power BI report presenting professional experience, Microsoft certifications, analytics, data engineering, and AI capabilities.
+## 🚀 Live Interactive Reports
 
-[Open Professional Profile in Power BI](https://app.powerbi.com/view?r=eyJrIjoiYTJlZWUxYTUtOGQxNS00ODU3LWIxNjktYzIxMDY3ZGIwZWM5IiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
+| Report | Description | Live Link |
+| :--- | :--- | :--- |
+| **Professional Profile** | Single-script CV report rendered via custom SVG measures with Base64 asset embedding. | [Open in Power BI](https://app.powerbi.com/view?r=eyJrIjoiYTJlZWUxYTUtOGQxNS00ODU3LWIxNjktYzIxMDY3ZGIwZWM5IiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9) |
+| **Workday Monitor** | Real-time workday tracker featuring schedule status, time elapsed/remaining, and automated CET/CEST offset logic. | [Open in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9) |
 
-### Workday Monitor
+---
 
-Dynamic workday monitoring report with schedule tracking, elapsed and remaining time, progress calculations, workday status, and Europe/Warsaw CET and CEST handling.
+## 🛠️ Technical Highlights
 
-[Open Workday Monitor in Power BI](https://app.powerbi.com/view?r=eyJrIjoiMjU1NjRiMDktZDVkYS00MWU5LWJmZjYtNTRhM2EzNGUzMjJiIiwidCI6Ijc2NGY3ZmY0LTY2OWQtNDAwYi1iMDY0LTM4NTAyNDAxMTNiYiIsImMiOjl9)
+* **Pure DAX SVG Generation:** Visual layouts, circular photo frames, dynamic status bars, and UI elements constructed completely within DAX measures and returned as Image URL data URIs.
+* **Self-Contained Profile Report:** Entire layout and profile imagery are encapsulated within model measures (Base64 JPEG), requiring zero external image hosting.
+* **Deterministic Time-Zone Engine:** Pure DAX implementation of Europe/Warsaw daylight saving time transitions (calculating the last Sunday of March and October) based on UTCNOW().
+* **Coordinated Theme System:** Synchronized light and dark visual palettes engineered with Microsoft Fabric design tokens.
+* **Modern Developer Lifecycle:** Stored natively in Power BI Project (PBIP) format, enabling granular source control over report layouts and semantic models.
 
-## Project Features
+---
 
-- Advanced DAX measures
-- Power Query scripts used by the deployed Power BI Pro solution
-- Self-contained SVG visualizations returned as Image URL values
-- Coordinated light and dark themes inspired by Microsoft Fabric
-- Embedded profile photo stored directly in DAX as Base64
-- Responsive desktop and mobile report layouts
-- Europe/Warsaw CET and CEST handling implemented in DAX
-- Dynamic workday progress and status calculations
-- Semantic modeling
-- Reusable Power BI development components
-- Public Power BI report demonstrations
-- Power BI Pro workspace and app deployment
-- Git-integrated Power BI Project structure
+## 📂 Repository Structure
 
-## Repository Structure
-
-```text
 power-bi-lab/
 ├── Professional Profile.Report/
 ├── Professional Profile.SemanticModel/
@@ -42,171 +37,31 @@ power-bi-lab/
 ├── Workday Monitor.SemanticModel/
 ├── LICENSE
 └── README.md
-```
 
-## DAX Measures
+---
 
-The measures generate complete SVG visualizations and return them as Power BI-compatible data URIs.
+## ⚙️ How It Works
 
-The current SVG measures do not require a `RefreshInfo` table. The displayed `GENERATED` timestamp represents the measure evaluation time converted to Europe/Warsaw local time. It does not represent semantic model refresh metadata.
+### Dynamic Workday Engine
+The schedule runs against configurable DAX parameters:
+* Start: 08:00
+* End: 16:00
+* Time Zone: Europe/Warsaw (CET = UTC+1, CEST = UTC+2)
+* Tracking: Progress percentage, time remaining, and current interval status calculated dynamically on evaluation.
 
-## Power Query Scripts
+### Visual Rendering Setup
+Measures are categorized as Image URL in the semantic model. Visual containers are optimized by:
+1. Stripping default titles, backgrounds, and padding.
+2. Setting strict SVG viewBox coordinates to guarantee pixel-perfect responsiveness across desktop and mobile form factors.
 
-The Power Query scripts used by the deployed Power BI Pro solution remain active server-side components.
+---
 
-The obsolete `refresh-info.pq` script was removed because the current SVG measures calculate the displayed `GENERATED` timestamp directly in DAX.
+## 📌 Architectural Notes & Known Boundaries
 
-## Installation
+* **Demonstration Scope:** This lab serves as an exploratory showcase pushing the boundaries of DAX-driven UI rendering without third-party custom visuals.
+* **Clock Dynamics:** Timestamps reflect model evaluation instances (UTCNOW()) rather than client-side continuous JavaScript clocks.
 
-### 1. Add the Power Query scripts where required
+---
 
-For a deployed solution that uses the Power Query scripts:
-
-1. Open **Transform data** in Power BI Desktop.
-2. Select **New source**, followed by **Blank query**.
-3. Open **Advanced Editor**.
-4. Paste the complete contents of the corresponding `.pq` file.
-5. Assign the appropriate query name.
-6. Select **Close & Apply**.
-
-The two Power Query scripts remain part of the deployed Power BI Pro solution, but neither script provides refresh metadata to the SVG measures.
-
-### 2. Add a DAX measure
-
-1. Open the Power BI Desktop model.
-2. Select the table that should store the measure.
-3. Select **New measure**.
-4. Copy and paste the complete measure definition from the corresponding `.dax` file.
-5. Set **Data category** to **Image URL**.
-6. Add the measure to a visual that supports Image URL values.
-
-### 3. Configure the visual
-
-For best results:
-
-- Disable the visual title.
-- Disable the visual background.
-- Disable the visual border.
-- Minimize internal padding.
-- Preserve the intended SVG aspect ratio.
-- Validate rendering in both Power BI Desktop and Power BI Service.
-
-## Workday Monitor Configuration
-
-The default configuration is:
-
-```text
-Work start: 08:00
-Work end:   16:00
-Time zone:  Europe/Warsaw
-Workdays:   Monday to Friday
-```
-
-The schedule can be changed in both Workday Monitor measures:
-
-```dax
-VAR WorkStartTime = TIME(8, 0, 0)
-VAR WorkEndTime = TIME(16, 0, 0)
-```
-
-Keep the same values in the light and dark measures to preserve consistent calculations.
-
-## Time-Zone Handling
-
-The measures calculate the Europe/Warsaw daylight-saving-time conversion directly in DAX:
-
-```text
-CET  = UTC+1
-CEST = UTC+2
-```
-
-The applicable offset is determined using the final Sunday of March and the final Sunday of October.
-
-## Generated Timestamp
-
-The SVG footer displays `GENERATED`, followed by the current Europe/Warsaw date and time calculated from `UTCNOW()`:
-
-```dax
-VAR CurrentUtcDateTime = UTCNOW()
-```
-
-This value represents measure evaluation time. Pure DAX does not provide a reliable semantic model refresh timestamp without an external metadata source or supporting refresh table.
-
-## Professional Profile
-
-The Professional Profile measures include:
-
-- An embedded circular profile photo
-- A professional summary
-- Power BI and Microsoft Fabric experience calculations
-- Microsoft certifications
-- Education
-- Analytics, data engineering, and AI capabilities
-- Coordinated light and dark palettes
-- A DAX-generated Europe/Warsaw timestamp
-
-The profile photo is embedded directly in the measure as a Base64 JPEG and does not depend on an external image URL.
-
-## Light and Dark Modes
-
-Both report components are available in coordinated variants:
-
-```text
-Professional Profile Light
-Professional Profile Dark
-Workday Monitor Light
-Workday Monitor Dark
-```
-
-Each light and dark pair preserves the same layout, calculations, labels, dimensions, font hierarchy, and information structure. Only the visual color system changes.
-
-## Mobile Layout
-
-Both reports include layouts designed for Power BI mobile experiences.
-
-Rendering should be validated separately in:
-
-- Power BI Desktop
-- Power BI Service
-- Power BI mobile applications
-- Different browsers and browser zoom levels
-
-## Known Limitations
-
-- The project is intended for development, demonstration, portfolio, and educational use.
-- Workday Monitor is not an employee attendance or time-registration system.
-- Current time and progress values depend on report or semantic model recalculation.
-- `UTCNOW()` does not provide a continuously running client-side clock.
-- The displayed `GENERATED` value is not a semantic model refresh timestamp.
-
-## Skills Demonstrated
-
-- **Advanced DAX:** Complex measures for time-zone handling, dynamic status calculations, and self-contained SVG visualizations.
-- **Power Query (M):** Data transformation scripts used by the deployed Power BI solution.
-- **Data Visualization and UI/UX:** Responsive layouts, custom SVG graphics, and coordinated light and dark themes.
-- **Semantic Modeling:** Structured semantic models designed for report integration and maintainability.
-- **Power BI Project structure:** Source-controlled report and semantic model definitions.
-- **Power BI Deployment:** Publishing and managing reports in a Power BI Pro workspace and app environment.
-- **Git Integration:** Version-controlled Power BI development artifacts stored in GitHub.
-
-## Challenges and Lessons Learned
-
-### DAX SVG generation
-
-Constructing complex, self-contained SVG graphics using DAX required careful string manipulation, dynamic-variable handling, and Base64 image embedding without breaking the data URI structure.
-
-### Time-zone handling
-
-Implementing Europe/Warsaw CET and CEST conversion without an external API required precise logic for calculating the final Sundays of March and October.
-
-### Responsive design
-
-Maintaining consistent layouts, calculations, dimensions, and font hierarchies across light and dark variants required validation in Power BI Desktop, Power BI Service, mobile layouts, and different browser configurations.
-
-### Source control
-
-Separating report definitions from semantic model definitions provides a clearer Power BI Project structure and improves version control, maintainability, and Git-based development.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+## 📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
