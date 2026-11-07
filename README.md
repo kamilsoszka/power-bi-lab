@@ -213,6 +213,14 @@ Both reports include layouts intended for Power BI mobile experiences. Rendering
 - Current time and progress values depend on report or semantic model recalculation.
 - `UTCNOW()` does not provide a continuously running client-side clock.
 
+## Skills Demonstrated
+
+- **Advanced DAX:** Creating complex measures for time-zone handling, dynamic status calculations, and self-contained SVG visualizations.
+- **Power Query (M):** Developing data transformation scripts for the deployed Power BI solution.
+- **Data Visualization & UI/UX:** Designing responsive report layouts, custom SVG graphics, and coordinated light/dark themes.
+- **Semantic Modeling:** Structuring data models for optimal performance and direct visual integration.
+- **Power BI Deployment:** Publishing and managing reports within a Power BI Pro workspace and app environment.
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
