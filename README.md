@@ -221,6 +221,12 @@ Both reports include layouts intended for Power BI mobile experiences. Rendering
 - **Semantic Modeling:** Structuring data models for optimal performance and direct visual integration.
 - **Power BI Deployment:** Publishing and managing reports within a Power BI Pro workspace and app environment.
 
+## Challenges and Lessons Learned
+
+- **DAX SVG Generation:** Constructing complex, self-contained SVG graphics using pure DAX required careful string manipulation, handling dynamic variables, and embedding Base64 images without breaking the data URI schema.
+- **Time-Zone Handling in DAX:** Implementing accurate Europe/Warsaw CET and CEST conversions manually (without external APIs) required precise logic for calculating the final Sundays of March and October.
+- **Responsive UI Coordination:** Ensuring that the light and dark mode variants maintained identical pixel-perfect layouts and font hierarchies across Desktop, Service, and mobile devices required rigorous visual validation.
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
