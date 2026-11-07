@@ -62,6 +62,7 @@ power-bi-lab/
 │   ├── professional-profile-dark.dax
 │   ├── workday-monitor-light.dax
 │   └── workday-monitor-dark.dax
+├── fabric-workspace/
 ├── power-query/
 │   ├── professional-profile.pq
 │   └── workday-monitor.pq
