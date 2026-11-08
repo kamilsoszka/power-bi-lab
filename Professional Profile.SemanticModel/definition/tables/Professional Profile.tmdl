@@ -339,7 +339,7 @@ table 'Professional Profile'
 			
 			    -- Experience
 			    & "<rect x='368' y='410' width='10' height='29' rx='5' fill='url(#accent)'/><text x='395' y='432' font-family='Segoe UI,Arial' font-size='22' font-weight='700' fill='#F1F8F6'>EXPERIENCE</text><line x1='368' y1='450' x2='930' y2='450' stroke='#344E49' stroke-width='1.2'/>"
-			    & "<circle cx='386' cy='494' r='17' fill='#F2C94C'/><text x='386' y='499' text-anchor='middle' font-family='Segoe UI,Arial' font-size='14.5' font-weight='700' fill='#F4D65E'>BI</text>"
+			    & "<circle cx='386' cy='494' r='17' fill='#F2C94C'/><text x='386' y='499' text-anchor='middle' font-family='Segoe UI,Arial' font-size='14.5' font-weight='700' fill='#3A3215'>BI</text>"
 			    & "<text x='417' y='489' font-family='Segoe UI,Arial' font-size='19.5' font-weight='700' fill='#F1F8F6'>Power BI experience</text><text x='917' y='490' text-anchor='end' font-family='Segoe UI,Arial' font-size='24' font-weight='700' fill='#F4D65E'>" & PBIExperienceText & "</text><text x='417' y='510' font-family='Segoe UI,Arial' font-size='15.5' fill='#91AAA4'>Since September 2018</text>"
 			    & "<rect x='368' y='533' width='562' height='106' rx='13' fill='#3A3215' stroke='#8F7725'/>"
 			    & "<circle cx='391' cy='561' r='3' fill='#F4D65E'/><text x='405' y='565' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Advanced DAX engineering</text><circle cx='391' cy='590' r='3' fill='#F4D65E'/><text x='405' y='594' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Semantic modeling</text><circle cx='391' cy='619' r='3' fill='#F4D65E'/><text x='405' y='623' font-family='Segoe UI,Arial' font-size='16.5' fill='#C5D8D3'>Decision support systems</text>"
@@ -399,28 +399,9 @@ table 'Professional Profile'
 		source =
 				let
 				    Source =
-				        Table.FromRows(
-				            Json.Document(
-				                Binary.Decompress(
-				                    Binary.FromText(
-				                        "i45W8k1NLC4tSi1Wio0FAA==",
-				                        BinaryEncoding.Base64
-				                    ),
-				                    Compression.Deflate
-				                )
-				            ),
-				            let
-				                _t =
-				                    ((type nullable text)
-				                        meta
-				                        [
-				                            Serialized.Text = true
-				                        ])
-				            in
-				                type table
-				                [
-				                    #"Placeholder#(lf)" = _t
-				                ]
+				        #table(
+				            type table [Placeholder = text],
+				            {{"Professional Profile"}}
 				        )
 				in
 				    Source
